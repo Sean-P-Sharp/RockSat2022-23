@@ -1,0 +1,33 @@
+# RRCC/ACC Rocksat-X 2023
+# Data Storing TEST BUILD - Gage Gunn
+# THIS FILE IS FOR DATE AND TIME NOT IN FILE NAME
+
+
+## Libraries ##
+
+import os
+from datetime import datetime
+
+
+## Variables ##
+
+ID = 1
+current_time = datetime.now()
+file_name = ''
+file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + '.txt'
+
+
+## Functions ##
+
+## Main ## 
+
+while True:
+    if os.path.exists(file_path):
+        print('File already exists, now trying #' + str(ID))
+        ID += 1
+        file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + '.txt'
+    else:
+        with open(file_path, 'w') as fp:
+            fp.write('Test   -   ')
+            fp.write(current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec'))
+        break
