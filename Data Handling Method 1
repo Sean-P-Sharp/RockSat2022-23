@@ -13,17 +13,18 @@ from datetime import datetime
 
 ID = 1
 current_time = datetime.now()
-file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + '.txt'
+file_path = r'C:\Users\ggunn\Documents\DHM1\#' + str(ID) + '.txt'
 
 ## Main ## 
 
 while True:
     if os.path.exists(file_path): #If file already exists
-        print('File already exists, now trying #' + str(ID))
         ID += 1
-        file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + '.txt' #Update the file path to the new ID
+        print('File already exists, now trying #' + str(ID))
+        file_path = r'C:\Users\ggunn\Documents\DHM1\#' + str(ID) + '.txt' #Update the file path to the new ID
     else: #If file doesnt already exist
         with open(file_path, 'w') as fp:
             fp.write('Test   -   ')
             fp.write(current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec'))
         break
+        
