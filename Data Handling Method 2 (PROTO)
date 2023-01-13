@@ -1,0 +1,69 @@
+# RRCC/ACC Rocksat-X 2023
+# Data Storing TEST BUILD - Gage Gunn
+# THIS FILE IS FOR DATE AND TIME IN FILE NAME
+
+
+
+
+
+
+
+#THIS METHOD DOES NOT WORK YET --- STILL UNDER DEVELOPMENT
+
+
+
+
+
+
+
+
+
+## Libraries ##
+
+import os
+from datetime import datetime
+import time
+
+
+## Variables ##
+
+ID = 0
+current_time = datetime.now()
+file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + ' ' + current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec') + '.txt'
+test_path = file_path[39]
+## Main ## 
+
+#time.sleep(3)
+
+while True:
+    if file_path[39].isnumeric(): #If char 1 is a number (first file has been created already)
+        #test_path = file_path[39]
+        while int(file_path[39]) == ID:
+            ID += 1
+        print('Current ID is below 2 digits, increasing ID by 1')
+        file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + ' ' + current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec') + '.txt' #Update the file path to the new ID
+        with open(file_path, 'w') as fp:
+            fp.write('This file ID is below 2 digits')
+        break 
+    else:
+        pass
+    
+    if file_path[:2].isnumeric(): #If char 2 is a number (double digit file has already been created)
+        print('Current file is within 2 digits, moving onward')
+        pass
+    else: #Double digit hasnt been reached (keep adding to ID)
+        print('Current file has not reached double digits')
+        ID += 1
+        file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + ' ' + current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec') + '.txt' #Update the file path to the new ID
+        with open(file_path, 'w') as fp:
+            fp.write('This file ID is at 2 digits')
+        break 
+    
+    
+    
+
+            
+            
+#check character after #
+#check if the character after that is a number, if so repeat
+#once char is not a number, end loop and create next file in sequence
