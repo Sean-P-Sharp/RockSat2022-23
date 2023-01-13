@@ -27,6 +27,6 @@ while files_list:
     ID += 1
     files_list = [file for file in os.listdir(folder_path) if file.split(stop_char)[0] == str(ID)]
     
-file_path = r'C:\DHM2\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt' #Update the file path to the new ID
+file_path = r'\home\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt' #Update the file path to the new ID
 with open(file_path, 'w') as fp:
     fp.write('This is a test file with ID ' + str(ID)) # <<<<<< Change for
