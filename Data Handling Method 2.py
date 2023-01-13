@@ -10,8 +10,8 @@ from datetime import datetime
 ## Variables ##
 ID = 1
 current_time = datetime.now()
-file_path = r'C:\home\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
-folder_path = r'C:\home'
+file_path = r'\home\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+folder_path = r'\home'
 stop_char = ' '
 
 
