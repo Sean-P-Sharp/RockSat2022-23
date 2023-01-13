@@ -16,9 +16,6 @@ current_time = datetime.now()
 file_name = ''
 file_path = r'C:\Users\ggunn\Documents\RSTest\#' + str(ID) + '.txt'
 
-
-## Functions ##
-
 ## Main ## 
 
 while True:
@@ -31,3 +28,4 @@ while True:
             fp.write('Test   -   ')
             fp.write(current_time.strftime('%d-%m-%Y %Hhr-%Mmin-%Ssec'))
         break
+        
