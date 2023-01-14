@@ -21,12 +21,12 @@ current_time = datetime.now()
 
 ### Main ###
 #Create Data folder
-if not os.path.exists(r'C:\Data\\'):
-    os.makedirs(r'C:\Data\\')
+if not os.path.exists(r'\home\Data\\'):
+    os.makedirs(r'\home\Data\\')
 
 #BME680 folder
-bme_path = r'C:\Data\BME680'
-bme_fpath = r'C:\Data\BME680\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+bme_path = r'\home\Data\BME680'
+bme_fpath = r'\home\Data\BME680\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(bme_path):
     os.makedirs(bme_path)
 bme_flist = [file for file in os.listdir(bme_path) if file.split(stop_char)[0] == str(ID)]
@@ -53,8 +53,8 @@ bme_temperature_fpath = bme_temperature_path + '\\' + str(ID) + ' ' + 'Temperatu
 
 
 #9-DOF folder
-dof_path = r'C:\Data\9DOF'
-dof_fpath = r'C:\Data\9DOF\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+dof_path = r'\home\Data\9DOF'
+dof_fpath = r'\home\Data\9DOF\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(dof_path):
     os.makedirs(dof_path)
 dof_flist = [file for file in os.listdir(dof_path) if file.split(stop_char)[0] == str(ID)]
@@ -76,32 +76,32 @@ dof_gyroscope_fpath = dof_gyroscope_path + '\\' + str(ID) + ' ' + 'Gyroscope_' +
 
 
 #MLX90640 folder
-mlx_path = r'C:\Data\MLX90640'
-mlx_fpath = r'C:\Data\MLX90640\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+mlx_path = r'\home\Data\MLX90640'
+mlx_fpath = r'\home\Data\MLX90640\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(mlx_path):
     os.makedirs(mlx_path)
 mlx_flist = [file for file in os.listdir(mlx_path) if file.split(stop_char)[0] == str(ID)]
 
 
 #Aux Camera folder
-aux_path = r'C:\Data\Aux Camera'
-aux_fpath = r'C:\Data\Aux Camera\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+aux_path = r'\home\Data\Aux Camera'
+aux_fpath = r'\home\Data\Aux Camera\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(aux_path):
     os.makedirs(aux_path)
 aux_flist = [file for file in os.listdir(aux_path) if file.split(stop_char)[0] == str(ID)]
 
 
 #Geiger Counter folder
-geiger_path = r'C:\Data\Geiger Counter'
-geiger_fpath = r'C:\Data\Geiger Counter\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+geiger_path = r'\home\Data\Geiger Counter'
+geiger_fpath = r'\home\Data\Geiger Counter\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(geiger_path):
     os.makedirs(geiger_path)
 geiger_flist = [file for file in os.listdir(geiger_path) if file.split(stop_char)[0] == str(ID)]
 
 
 #SEN14722 folder
-sen_path = r'C:\Data\SEN14722'
-sen_fpath = r'C:\Data\SEN14722\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+sen_path = r'\home\Data\SEN14722'
+sen_fpath = r'\home\Data\SEN14722\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 if not os.path.exists(sen_path):
     os.makedirs(sen_path)
 sen_flist = [file for file in os.listdir(sen_path) if file.split(stop_char)[0] == str(ID)]
