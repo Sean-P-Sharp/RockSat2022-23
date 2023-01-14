@@ -13,6 +13,7 @@ from datetime import datetime
 
 ### Variables ###
 ID = 1
+stop_char = ' '
 current_time = datetime.now()
 
 ### Main ###
@@ -23,35 +24,41 @@ if not os.path.exists(r'C:\Data\\'):
 #Create BME680 folder
 bme_path = r'C:\Data\BME680'
 bme_fpath = r'C:\Data\BME680\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+bme_flist = [file for file in os.listdir(bme_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(bme_path):
     os.makedirs(bme_path)
 
 #Create 9-DOF folder
 dof_path = r'C:\Data\9DOF'
 dof_fpath = r'C:\Data\9DOF\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+dof_flist = [file for file in os.listdir(dof_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(dof_path):
     os.makedirs(dof_path)
 
 #Create MLX90640 folder
 mlx_path = r'C:\Data\MLX90640'
 mlx_fpath = r'C:\Data\MLX90640\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+mlx_flist = [file for file in os.listdir(mlx_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(mlx_path):
     os.makedirs(mlx_path)
 
 #Create Aux Camera folder
 aux_path = r'C:\Data\Aux Camera'
 aux_fpath = r'C:\Data\Aux Camera\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+aux_flist = [file for file in os.listdir(aux_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(aux_path):
     os.makedirs(aux_path)
 
 #Create Geiger Counter folder
 geiger_path = r'C:\Data\Geiger Counter'
 geiger_fpath = r'C:\Data\Geiger Counter\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+geiger_flist = [file for file in os.listdir(geiger_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(geiger_path):
     os.makedirs(geiger_path)
 
 #Create SEN14722 folder
 sen_path = r'C:\Data\SEN14722'
 sen_fpath = r'C:\Data\SEN14722\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
+sen_flist = [file for file in os.listdir(sen_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(sen_path):
     os.makedirs(sen_path)
