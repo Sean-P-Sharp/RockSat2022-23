@@ -59,17 +59,17 @@ if not os.path.exists(dof_path):
     os.makedirs(dof_path)
 dof_flist = [file for file in os.listdir(dof_path) if file.split(stop_char)[0] == str(ID)]
 
-if not os.path.exists(dof_path + '\Accelerometer'):
+if not os.path.exists(dof_path + '\Accelerometer'): #Accelerometer Folder
     os.makedirs(dof_path + '\Accelerometer')
 dof_accelerometer_path = dof_path + '\Accelerometer'
 dof_accelerometer_fpath = dof_accelerometer_path + '\\' + str(ID) + ' ' + 'Accelerometer_' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 
-if not os.path.exists(dof_path + '\Magnetometer'):
+if not os.path.exists(dof_path + '\Magnetometer'): #Magnetometer Folder
     os.makedirs(dof_path + '\Magnetometer')
 dof_magnetometer_path = dof_path + '\Magnetometer'
 dof_magnetometer_fpath = dof_magnetometer_path + '\\' + str(ID) + ' ' + 'Magnetometer_' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
 
-if not os.path.exists(dof_path + '\Gyroscope'):
+if not os.path.exists(dof_path + '\Gyroscope'): #Gyroscope Folder
     os.makedirs(dof_path + '\Gyroscope')
 dof_gyroscope_path = dof_path + '\Gyroscope'
 dof_gyroscope_fpath = dof_gyroscope_path + '\\' + str(ID) + ' ' + 'Gyroscope_' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt'
