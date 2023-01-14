@@ -62,3 +62,14 @@ sen_fpath = r'C:\Data\SEN14722\\' + str(ID) + ' ' + current_time.strftime('%m-%d
 sen_flist = [file for file in os.listdir(sen_path) if file.split(stop_char)[0] == str(ID)]
 if not os.path.exists(sen_path):
     os.makedirs(sen_path)
+
+
+#Use code below for writing files (change each list with respective list)
+# while files_list:
+#     print('File ' + str(ID) + ' already exists') # <<<<<< Can be removed to save data
+#     ID += 1
+#     files_list = [file for file in os.listdir(folder_path) if file.split(stop_char)[0] == str(ID)]
+    
+# file_path = r'\home\\' + str(ID) + ' ' + current_time.strftime('%m-%d-%Y_%Hhr-%Mmin-%Ssec') + '.txt' #Update the file path to the new ID
+# with open(file_path, 'w') as fp:
+#     fp.write('This is a test file with ID ' + str(ID)) # <<<<<< Change for
