@@ -1,0 +1,110 @@
+
+import os
+from datetime import datetime
+
+class FileStructure:
+    def __init__(self, data_path, folders, subfolders):
+        self.data_path = data_path
+        self.folders = folders
+        self.subfolders = subfolders
+        self.ID = 1
+
+    def create_folders(self):
+        os.makedirs(self.data_path, exist_ok=True)
+        for folder in self.folders:
+            path = os.path.join(self.data_path, folder)
+            os.makedirs(path, exist_ok=True)
+            if folder in self.subfolders:
+                for subfolder in self.subfolders[folder]:
+                    subpath = os.path.join(path, subfolder)
+                    os.makedirs(subpath, exist_ok=True)
+
+    def create_file(self, folder_name, subfolder_name, data):
+        while True:
+            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {current_time}.txt")
+            folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
+            if [file for file in os.listdir(folder_path) if file.split(stop_char)[0] == str(self.ID)]:
+                print(f"File with ID {self.ID} already exists.")
+                self.ID += 1
+            else:
+                with open(file_path, 'w') as file:
+                    file.write(data)
+                self.ID = 1
+                break
+
+            if subfolder_name == '':
+                self.__dict__[folder_name + f"{self.ID}"] = file_path
+            else:
+                self.__dict__[subfolder_name + f"{self.ID}"] = file_path
+            
+    def flight_log(self, flog):
+        while True:
+            global log_fpath
+            log_path = os.path.join(self.data_path, "_Flight Log")
+            log_fpath = os.path.join(self.data_path, "_Flight Log", f"{self.ID} {current_time}.txt")
+            if [file for file in os.listdir(log_path) if file.split(stop_char)[0] == str(self.ID)]:
+                print(f"Flight Log with ID {self.ID} already exists.")
+                self.ID += 1
+            else:
+                with open(log_fpath, 'w') as log:
+                    log.write(flog)
+                self.ID = 1
+                break
+    
+    def find_highest_ID(self):
+        for folder in self.folders:
+            folder_path = os.path.join(self.data_path, folder)
+            files = os.listdir(folder_path)
+            highest_ID = 0
+            for file in files:
+                ID = int(file.split(stop_char)[0])
+                if ID > highest_ID:
+                    highest_ID = ID
+                    self.__dict__[folder] = file
+            if folder in self.subfolders:
+                for subfolder in self.subfolders[folder]:
+                    subfolder_path = os.path.join(folder_path, subfolder)
+                    files = os.listdir(subfolder_path)
+                    highest_ID = 0
+                    for file in files:
+                        ID = int(file.split(stop_char)[0])
+                        if ID > highest_ID:
+                            highest_ID = ID
+                            self.__dict__[subfolder] = file
+
+
+stop_char = ' '
+current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
+folders = ["BME680", "9DOF", "MLX90640", "Aux Camera", "Geiger Counter", "SEN14722", "_Flight Log"]
+subfolders = {
+    "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
+    "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+}
+
+
+
+data_path = r"C:\Users\Gage\Desktop\Data"
+fs = FileStructure(data_path, folders, subfolders)
+fs.create_folders()
+fs.flight_log('Folders have been created - ' + current_time + '\n')
+
+# fs.create_file("BME680", "Gas", "data")
+# fs.create_file("BME680", "Pressure", "data")
+
+
+
+
+
+
+
+# with open(log_fpath, 'a') as log:
+#     log.write('test test test')
+#     pass
+
+#Test
+# test_number = str(20)
+# test_flog = 'Testing'
+# file_structure.create_file("BME680", "Temperature", test_number) #Write to a subfolder
+# file_structure.create_file('MLX90640', '', test_number) #Write to a folder
+
+#file_structure.create_file('MLX90640', '', 'test test TEEEEEST')
