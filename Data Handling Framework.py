@@ -29,10 +29,8 @@ class FileStructure:
                 for subfolder in self.subfolders[folder]:
                     subpath = os.path.join(path, subfolder)
                     os.makedirs(subpath, exist_ok=True)
-                    
+
     def write_to_file(self, folder_name, subfolder_name, data):
-        current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
-        stop_char = ' '
         while True:
             file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {current_time}.txt")
             folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
@@ -44,10 +42,25 @@ class FileStructure:
                     file.write(data)
                 self.ID = 1
                 break
+            
+    def flight_log(self, flog):
+        while True:
+            log_path = os.path.join(self.data_path, "_Flight Log")
+            log_fpath = os.path.join(self.data_path, "_Flight Log", f"{self.ID} {current_time}.txt")
+            if [file for file in os.listdir(log_path) if file.split(stop_char)[0] == str(self.ID)]:
+                print(f"Flight Log with ID {self.ID} already exists.")
+                self.ID += 1
+            else:
+                with open(log_fpath, 'w') as log:
+                    log.write(flog)
+                self.ID = 1
+                break
 
 
 ### Variables ###
-folders = ["BME680", "9DOF", "MLX90640", "Aux Camera", "Geiger Counter", "SEN14722"]
+stop_char = ' '
+current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
+folders = ["BME680", "9DOF", "MLX90640", "Aux Camera", "Geiger Counter", "SEN14722", "_Flight Log"]
 subfolders = {
     "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
     "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
@@ -59,15 +72,18 @@ subfolders = {
 #Create folders
 file_structure = FileStructure(r"C:\Users\Gage\Desktop\Data", folders, subfolders)
 file_structure.create_folders()
+file_structure.flight_log('Folders have been created\n')
 
 
 
-#   Note
-#To write to a singular file while a sensor is activated, use a while loop that runs while a sensor is turned on. Close file once sensor is deactivated and break while loop
+''' Notes
+1. To write to a singular file while a sensor is activated, use a while loop that runs while a sensor is turned on. Close file once sensor is deactivated and break while loop
+   this may be possible on/around line 43 to include it within the file_structure class
+'''
 
 
 #Test
-# test_number = str(20)
-# file_structure.write_to_file("BME680", "Temperature", test_number) #Write to a subfolder
-# file_structure.write_to_file('MLX90640', '', test_number) #Write to a folder
-
+test_number = str(20)
+test_flog = 'Testing'
+file_structure.write_to_file("BME680", "Temperature", test_number) #Write to a subfolder
+file_structure.write_to_file('MLX90640', '', test_number) #Write to a folder
