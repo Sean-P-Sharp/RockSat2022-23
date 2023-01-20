@@ -7,6 +7,20 @@ This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
 3. Allow data to be written to said files
+
+-----------------------------------------------------------------------
+
+HOW TO USE
+1. Create Folders - fs.create_folders() 
+2. Create a new file - fs.write_to_file("Folder", "Sub Folder (if none just leave as '')", [value])
+3. Write to the most recently created file - 
+    folder_path = os.path.join(r"C:\Users\Gage\Desktop\Data", "Folder", "Subfolder") << If no subfolder, remove the last part
+    file_path = highest_id_path[folder_path]
+    with open(file_path, 'a') as file:
+        file.write("\nAdditional data")
+
+*Notes*
+1. Make sure to assign correct file path to create folders to
 '''
 
 
@@ -95,21 +109,22 @@ fs.flight_log('Folders have been created\n')
 
 
 
-# #Test
+### Test Section ###
 test_number = str(20)
 test_flog = 'Testing'
 fs.write_to_file("BME680", "Temperature", test_number) #Write to a subfolder
 fs.write_to_file('MLX90640', '', test_number) #Write to a folder
 
 
-#Test example for writing to the file with the highest ID in a folder
-temperature_path = os.path.join(r"C:\Users\Gage\Desktop\Data", "BME680", "Temperature")
-file_path = highest_id_path[temperature_path]
+#Test example for writing to the file with the highest ID in a given folder
+folder_path = os.path.join(r"C:\Users\Gage\Desktop\Data", "MLX90640")
+file_path = highest_id_path[folder_path]
 with open(file_path, 'a') as file:
     file.write("\nAdditional data")
     
 
 
-#Changes
+#Changes Needed
 #1. Flight log will say "Folders have been created" every time, change so then it makes a note if folders have already been made
+#2. Make a way to add to the flight log
 
