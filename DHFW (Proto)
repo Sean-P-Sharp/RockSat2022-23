@@ -1,4 +1,16 @@
+'''
+Data Handling Framework PROTO
 
+RRCC/ACC Rocksat-X 2023
+Data Handling Framework
+This file will
+1. Create all necessary folders for data storage
+2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
+3. Allow data to be written to said files
+'''
+
+
+### Libraries ###
 import os
 from datetime import datetime
 
@@ -18,8 +30,9 @@ class FileStructure:
                 for subfolder in self.subfolders[folder]:
                     subpath = os.path.join(path, subfolder)
                     os.makedirs(subpath, exist_ok=True)
+        
 
-    def create_file(self, folder_name, subfolder_name, data):
+    def write_to_file(self, folder_name, subfolder_name, data):
         while True:
             file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {current_time}.txt")
             folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
@@ -31,15 +44,11 @@ class FileStructure:
                     file.write(data)
                 self.ID = 1
                 break
-
-            if subfolder_name == '':
-                self.__dict__[folder_name + f"{self.ID}"] = file_path
-            else:
-                self.__dict__[subfolder_name + f"{self.ID}"] = file_path
+        
+        find_highest_id(r"C:\Users\Gage\Desktop\Data")
             
     def flight_log(self, flog):
         while True:
-            global log_fpath
             log_path = os.path.join(self.data_path, "_Flight Log")
             log_fpath = os.path.join(self.data_path, "_Flight Log", f"{self.ID} {current_time}.txt")
             if [file for file in os.listdir(log_path) if file.split(stop_char)[0] == str(self.ID)]:
@@ -50,29 +59,24 @@ class FileStructure:
                     log.write(flog)
                 self.ID = 1
                 break
-    
-    def find_highest_ID(self):
-        for folder in self.folders:
-            folder_path = os.path.join(self.data_path, folder)
-            files = os.listdir(folder_path)
-            highest_ID = 0
-            for file in files:
-                ID = int(file.split(stop_char)[0])
-                if ID > highest_ID:
-                    highest_ID = ID
-                    self.__dict__[folder] = file
-            if folder in self.subfolders:
-                for subfolder in self.subfolders[folder]:
-                    subfolder_path = os.path.join(folder_path, subfolder)
-                    files = os.listdir(subfolder_path)
-                    highest_ID = 0
-                    for file in files:
-                        ID = int(file.split(stop_char)[0])
-                        if ID > highest_ID:
-                            highest_ID = ID
-                            self.__dict__[subfolder] = file
+
+### Functions ###
+highest_id = 0
+def find_highest_id(path):
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            find_highest_id(item_path)
+        else:
+            # Check if the file name starts with an ID
+            id = item.split(" ")[0]
+            if id.isdigit():
+                if fs.ID > highest_id:
+                    highest_id_path[path] = item_path
 
 
+### Variables ###
+highest_id_path = {}
 stop_char = ' '
 current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
 folders = ["BME680", "9DOF", "MLX90640", "Aux Camera", "Geiger Counter", "SEN14722", "_Flight Log"]
@@ -83,28 +87,29 @@ subfolders = {
 
 
 
-data_path = r"C:\Users\Gage\Desktop\Data"
-fs = FileStructure(data_path, folders, subfolders)
+### Main ###
+#Create folders
+fs = FileStructure(r"C:\Users\Gage\Desktop\Data", folders, subfolders)
 fs.create_folders()
-fs.flight_log('Folders have been created - ' + current_time + '\n')
-
-# fs.create_file("BME680", "Gas", "data")
-# fs.create_file("BME680", "Pressure", "data")
+fs.flight_log('Folders have been created\n')
 
 
 
+# #Test
+test_number = str(20)
+test_flog = 'Testing'
+fs.write_to_file("BME680", "Temperature", test_number) #Write to a subfolder
+fs.write_to_file('MLX90640', '', test_number) #Write to a folder
 
 
+#Test example for writing to the file with the highest ID in a folder
+temperature_path = os.path.join(r"C:\Users\Gage\Desktop\Data", "BME680", "Temperature")
+file_path = highest_id_path[temperature_path]
+with open(file_path, 'a') as file:
+    file.write("\nAdditional data")
+    
 
 
-# with open(log_fpath, 'a') as log:
-#     log.write('test test test')
-#     pass
+#Changes
+#1. Flight log will say "Folders have been created" every time, change so then it makes a note if folders have already been made
 
-#Test
-# test_number = str(20)
-# test_flog = 'Testing'
-# file_structure.create_file("BME680", "Temperature", test_number) #Write to a subfolder
-# file_structure.create_file('MLX90640', '', test_number) #Write to a folder
-
-#file_structure.create_file('MLX90640', '', 'test test TEEEEEST')
