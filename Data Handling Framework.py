@@ -93,7 +93,7 @@ def find_highest_id(path):
 highest_id_path = {}
 stop_char = ' '
 current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
-folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger Counter", "SEN14722", "_Flight Log", "VL53L1X"]
+folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger Counter", "_Flight Log", "VL53L1X"]
 subfolders = {
     "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
     "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
