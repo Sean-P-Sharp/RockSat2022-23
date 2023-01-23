@@ -1,7 +1,6 @@
 """
 File Structure Test
-This file is for testing the ability to access the 'File_Structure' file for use for the 22-23 RockSat-X Program
-along with giving examples on how it is used
+This file is for testing the ability to access the 'File_Structure' file for use for the 22-23 RockSat-X Program along with giving examples on how it is used
 """
 
 ### Librares ###
@@ -9,11 +8,10 @@ import os
 from File_Structure import FileStructure #<< This is our class for FileStructure
 
 
-
-data_path = r"C:\Users\Gage\Desktop\Data" # << This will be the main directory for the 'Data' folder to be stored
-highest_id_path = {}
+### Variables ###
+data_path = r"C:\Users\Gage\Desktop\Data"
 stop_char = ' '
-folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger Counter", "_Flight Log", "VL53L1X"]
+folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
 subfolders = {
     "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
     "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
@@ -24,16 +22,16 @@ fs = FileStructure(data_path, folders, subfolders)
 
 # Create the folders
 fs.create_folders()
-fs.flight_log('Folders have been created\n')
+#fs.write_to_folder('Flight_Log', '', 'Folders have been created\n')
 
 # Creating files and writing the FIRST LINE of data
 test_number = str(20)
 test_flog = 'Testing'
-fs.write_to_file("BME680", "Temperature", test_number) #Write to a subfolder
-fs.write_to_file('MLX90640', '', test_number) #Write to a folder
+fs.write_to_folder("BME680", "Temperature", test_number) #Write to a subfolder
+fs.write_to_folder('MLX90640', '', test_number) #Write to a folder
 
 #Writing to the file with the highest ID in a given folder
-folder_path = os.path.join(data_path, "BME680", "Temperature")
-file_path = highest_id_path[folder_path]
+folder_path = os.path.join(data_path, "Flight_Log")
+file_path = fs.highest_id_path[folder_path]
 with open(file_path, 'a') as file:
     file.write("\nAdditional data")
