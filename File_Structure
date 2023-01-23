@@ -35,12 +35,16 @@ class FileStructure:
     highest_id = 0
     highest_id_path = {}
 
-    def __init__(self, data_path, folders, subfolders):
-        self.data_path = data_path
-        self.folders = folders
-        self.subfolders = subfolders
+    def __init__(self):
+        self.data_path = r"C:\Data"
+        self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
+        self.subfolders = {
+            "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
+            "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+            }
         self.ID = 1
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
+        self.stop_char = ' '
 
     def create_folders(self):
         os.makedirs(self.data_path, exist_ok=True)
@@ -52,13 +56,13 @@ class FileStructure:
                     subpath = os.path.join(path, subfolder)
                     os.makedirs(subpath, exist_ok=True)
         
-        find_highest_id(data_path)
+        find_highest_id(fs.data_path)
 
     def write_to_folder(self, folder_name, subfolder_name, data):
         while True:
             file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.txt")
             folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
-            if [file for file in os.listdir(folder_path) if file.split(stop_char)[0] == str(self.ID)]:
+            if [file for file in os.listdir(folder_path) if file.split(fs.stop_char)[0] == str(self.ID)]:
                 print(f"File with ID {self.ID} already exists.")
                 self.ID += 1
             else:
@@ -70,7 +74,7 @@ class FileStructure:
                 self.ID = 1
                 break
         
-        find_highest_id(data_path)
+        find_highest_id(fs.data_path)
 
 
 ### Functions ###
@@ -88,16 +92,8 @@ def find_highest_id(path):
 
 
 ### Variables ###
-data_path = r"C:\Users\Gage\Desktop\Data"
-stop_char = ' '
-folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
-subfolders = {
-    "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
-    "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
-}
-fs = FileStructure(data_path, folders, subfolders)
+fs = FileStructure()
 
 
 #Changes Needed
 #1. Flight log will say "Folders have been created" every time, change so then it makes a note if folders have already been made
-#2. Make a way to add to the flight log
