@@ -1,0 +1,99 @@
+'''
+File Structure
+Contrbutors: Gage Gunn
+
+RRCC/ACC Rocksat-X 2023
+Data Handling Framework
+This file will
+1. Create all necessary folders for data storage
+2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
+3. Allow data to be written to said files
+
+-----------------------------------------------------------------------
+
+HOW TO USE
+1. Create Folders - fs.create_folders() 
+2. Create a new file - fs.write_to_folder("Folder", "Sub Folder (if none just leave as '')", [value])
+3. Write to the most recently created file - 
+    folder_path = os.path.join(Main File Path, "Folder", "Subfolder") << If no subfolder, remove the last part
+    file_path = highest_id_path[folder_path]
+    with open(file_path, 'a') as file:
+        file.write("\nAdditional data")
+
+*Notes*
+1. Make sure to assign correct file path to create folders to
+'''
+
+
+
+### Libraries ###
+import os
+from datetime import datetime
+
+class FileStructure:
+    
+    highest_id = 0
+    highest_id_path = {}
+
+    def __init__(self):
+        self.data_path = r"C:\Data"
+        self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
+        self.subfolders = {
+            "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
+            "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+            }
+        self.ID = 1
+        self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
+        self.stop_char = ' '
+
+    def create_folders(self):
+        os.makedirs(self.data_path, exist_ok=True)
+        for folder in self.folders:
+            path = os.path.join(self.data_path, folder)
+            os.makedirs(path, exist_ok=True)
+            if folder in self.subfolders:
+                for subfolder in self.subfolders[folder]:
+                    subpath = os.path.join(path, subfolder)
+                    os.makedirs(subpath, exist_ok=True)
+        
+        find_highest_id(fs.data_path)
+
+    def write_to_folder(self, folder_name, subfolder_name, data):
+        while True:
+            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.txt")
+            folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
+            if [file for file in os.listdir(folder_path) if file.split(fs.stop_char)[0] == str(self.ID)]:
+                print(f"File with ID {self.ID} already exists.")
+                self.ID += 1
+            else:
+                with open(file_path, 'w') as file:
+                    file.write(data)
+                if fs.highest_id < self.ID:
+                    fs.highest_id = self.ID
+                    fs.highest_id_path[folder_path] = file_path
+                self.ID = 1
+                break
+        
+        find_highest_id(fs.data_path)
+
+
+### Functions ###
+def find_highest_id(path):
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            find_highest_id(item_path)
+        else:
+            # Check if the file name starts with an ID
+            id = item.split(" ")[0]
+            if id.isdigit():
+                if fs.ID > fs.highest_id:
+                    fs.highest_id_path[path] = item_path
+
+
+### Variables ###
+fs = FileStructure()
+
+
+#Changes Needed
+#1. Flight log will say "Folders have been created" every time, change so then it makes a note if folders have already been made
