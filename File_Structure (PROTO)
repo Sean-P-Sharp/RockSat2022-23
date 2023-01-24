@@ -47,7 +47,12 @@ class FileStructure:
         self.stop_char = ' '
 
     def create_folders(self):
-        os.makedirs(self.data_path, exist_ok=True)
+        try:
+            os.makedirs(self.data_path)
+        except FileExistsError:
+            
+            pass
+        
         for folder in self.folders:
             path = os.path.join(self.data_path, folder)
             os.makedirs(path, exist_ok=True)
