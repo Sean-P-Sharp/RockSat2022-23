@@ -50,16 +50,25 @@ class FileStructure:
         try:
             os.makedirs(self.data_path)
         except FileExistsError:
-            
+            print('Data folder already exist')
             pass
         
         for folder in self.folders:
             path = os.path.join(self.data_path, folder)
-            os.makedirs(path, exist_ok=True)
+            try:
+                os.makedirs(path)
+            except FileExistsError:
+                print(folder + ' folder already exists')
+                pass
+
             if folder in self.subfolders:
                 for subfolder in self.subfolders[folder]:
                     subpath = os.path.join(path, subfolder)
-                    os.makedirs(subpath, exist_ok=True)
+                    try:
+                        os.makedirs(subpath)
+                    except FileExistsError:
+                        print(subfolder + ' folder already exists')
+                        pass
         
         find_highest_id(fs.data_path)
 
