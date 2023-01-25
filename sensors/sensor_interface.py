@@ -3,14 +3,18 @@ from csv import writer
 from threading import Thread
 
 class sensor_interface:
-	def __init__(self, sensor_name, sensor_obj, bus_controller=None, sample_rate=5):
+	def __init__(self, sensor_name, sensor_obj, file_handler = None, bus_controller=None, sample_rate=5):
 		self._sensor_obj = sensor_obj
 		self._bus_controller = bus_controller
 		self._sample_rate = sample_rate
 		self._sensor_name = sensor_name
 		self._file_name = f"{sensor_name}_data.csv"
-		self._start_time = time.time()
-		self._csvfile = open(self._file_name, "a")
+		
+		if (file_handler == None):
+			self._csvfile = open(self._file_name, "a")
+		else:
+			self._csvfile = file_handler
+
 		self._writer_object = writer(self._csvfile)
 		self._writer_object.writerow(["time, data"])
 		self._collection_thread = Thread(target=self.collect_data) 
