@@ -1,11 +1,9 @@
 import sensor_interface
-import RPi.GPIO as GPIO
-import hcsr04
 import time
 
 class hcsr04_interface(sensor_interface.sensor_interface):
-	def __init__(self, name, hcsr04_object, sample_rate):
-		super().__init__(name, hcsr04_object, sample_rate=sample_rate)
+	def __init__(self, name, hcsr04_object, csv_writer=None, sample_rate=5):
+		super().__init__(name, hcsr04_object, csv_writer=csv_writer, sample_rate=sample_rate)
 					
 	def collect_data(self):
 		while not self._stop_thread:
