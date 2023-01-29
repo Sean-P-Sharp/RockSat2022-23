@@ -5,11 +5,11 @@ RRCC/ACC Rocksat-X 2023
 '''
 
 ### Libraries ###
-
 import time
 from threading import thread
 
 
+### Objects ###
 class SensorInterface:
     def __init__(self, sensor_name, sensor_obj, sample_rate=5):
         self.sensor_obj = sensor_obj
