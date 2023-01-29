@@ -10,15 +10,16 @@
 #- - - - - - Libraries - - - - - -#
 import os
 from File_Structure import FileStructure
-#import MLX90640 sensor
-#import BME680 sensor
-#import 9DOF sensor
-#import Aux Camera sensor
-#import Geiger Counter sensor
-#import SEN14722 sensor
-#import BNO055 sensor
-#import VL53L1X sensor
-#import P2C08 sensor
+from Sensor_Interface import SensorInterface
+# import MLX90640
+# import BME680
+# import 9DOF 
+# import Aux Camera 
+# import Geiger Counter 
+# import SEN14722 
+# import BNO055 
+# import VL53L1X 
+# import P2C08 
 
 #- - - - - - End - - - - - -#
 
@@ -27,6 +28,7 @@ from File_Structure import FileStructure
 
 #- - - - - - Variables - - - - - -#
 fs = FileStructure()
+si = SensorInterface()
 #- - - - - - End - - - - - - -#
 
 
@@ -42,5 +44,4 @@ fs = FileStructure()
 #- - - - - - Main - - - - - -#
 fs.create_folders()
 fs.write_to_folder('Flight_Log', '', 'Flight Log has been created \n')
-
 #- - - - - - End - - - - - - -#
