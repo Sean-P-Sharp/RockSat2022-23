@@ -1,0 +1,34 @@
+'''
+Sensor Interface
+Contrbutors: Gage Gunn, Vu ___
+RRCC/ACC Rocksat-X 2023
+'''
+
+### Libraries ###
+
+import time
+from threading import thread
+
+
+class SensorInterface:
+    def __init__(self, sensor_name, sensor_obj, sample_rate=5):
+        self.sensor_obj = sensor_obj
+        self.sample_rate = sample_rate
+        self.sensor_name = sensor_name
+
+        self._collection_thread = thread(target=self.collect_data) 
+        self.stop_thread = False
+
+    def init_sensor(self):
+        return True
+
+    def collect_data(self):
+        return True
+
+    def start_data_collection(self):
+        self.stop_thread = False
+        return True
+
+    def stop_data_collection(self):
+        self.stop_thread = True
+        return True
