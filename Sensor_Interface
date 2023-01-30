@@ -19,12 +19,12 @@ class SensorInterface:
         self._file_name = f"{sensor_name}_data.csv"
         
         if (csv_writer == None):
-		self._csvfile = open(self._file_name, "a")
-		self._writer_object = writer(self._csvfile)
-	else:
-		self._writer_object = csv_writer
+            self._csvfile = open(self._file_name, "a")
+            self._writer_object = writer(self._csvfile)
+        else:
+            self._writer_object = csv_writer
 
-	self._writer_object.writerow(["time, data"]
+        self._writer_object.writerow(["time, data"])
 
         self._collection_thread = thread(target=self.collect_data) 
         self.stop_thread = False
