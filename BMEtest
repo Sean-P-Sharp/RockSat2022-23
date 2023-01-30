@@ -18,9 +18,6 @@ def collect_data(self):
             temperature = self._sensor_obj.bme680.temperature()
             print("\nTemperature: %0.1f C" % bme680.temperature)
             
-            gas = self.sensor_obj.gas()
-            print("Gas: %d ohm" % bme680.gas)
-            
             humidity = self.sensor_obj.bme680.relative_humidity()
             print("Humidity: %0.1f %%" % bme680.relative_humidity)
             
@@ -30,4 +27,4 @@ def collect_data(self):
             altitude = self.sensor_obj.bme.altitude()
             print("Altitude = %0.2f meters" % bme680.altitude)
             
-            self.store_data_as_csv(temperature, gas, humidity, pressure, altitude)
+            self.store_data_as_csv(temperature, humidity, pressure, altitude)
