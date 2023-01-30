@@ -44,11 +44,11 @@ class SensorInterface:
         return True
     
     def cleanup(self):
-		if (self._csvfile != None):
-			self._csvfile.close()
-		return True
+	if (self._csvfile != None):
+		self._csvfile.close()
+	return True
 		
-	def store_data_as_csv(self, time, data_point):
-		self._writer_object.writerow([time, data_point])
-		return True
+    def store_data_as_csv(self, time, data_point):
+	self._writer_object.writerow([time, data_point])
+	return True
   
