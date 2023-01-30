@@ -29,6 +29,7 @@ HOW TO USE
 ### Libraries ###
 import os
 from datetime import datetime
+import csv
 
 class FileStructure:
     
@@ -39,7 +40,7 @@ class FileStructure:
         self.data_path = r"C:\Data"
         self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
         self.subfolders = {
-            "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
+            "BME680": ["Humidity", "Pressure", "Temperature"],
             "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
             }
         self.ID = 1
@@ -89,6 +90,17 @@ class FileStructure:
                 break
         
         find_highest_id(fs.data_path)
+
+    def write_to_file(self, folder_name, subfolder_name, data):
+        if subfolder_name == '': #Check if there is no subfolder
+            folder_path = os.path.join(fs.data_path, folder_name)
+        else:
+            folder_path = os.path.join(fs.data_path, folder_name, subfolder_name)
+
+        file_path = fs.highest_id_path[folder_path]
+        with open(file_path, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([data])
 
 
 ### Functions ###
