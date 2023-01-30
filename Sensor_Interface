@@ -1,6 +1,6 @@
 '''
 Sensor Interface
-Contrbutors: Gage Gunn, Vu ___
+Contrbutors: Gage Gunn, Angela Gabay, Vu Dang
 RRCC/ACC Rocksat-X 2023
 '''
 
@@ -11,7 +11,7 @@ from threading import thread
 
 ### Objects ###
 class SensorInterface:
-    def __init__(self, sensor_name, sensor_obj, sample_rate=5):
+    def __init__(self, sensor_name, sensor_obj, sample_rate=3):
         self.sensor_obj = sensor_obj
         self.sample_rate = sample_rate
         self.sensor_name = sensor_name
@@ -32,3 +32,5 @@ class SensorInterface:
     def stop_data_collection(self):
         self.stop_thread = True
         return True
+        
+  
