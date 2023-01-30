@@ -74,7 +74,7 @@ class FileStructure:
 
     def write_to_folder(self, folder_name, subfolder_name, data):
         while True:
-            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.txt")
+            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.csv")
             folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
             if [file for file in os.listdir(folder_path) if file.split(fs.stop_char)[0] == str(self.ID)]:
                 print(f"File with ID {self.ID} already exists.")
@@ -110,4 +110,3 @@ fs = FileStructure()
 
 
 #Changes Needed
-#1. Flight log will say "Folders have been created" every time, change so then it makes a note if folders have already been made
