@@ -11,7 +11,7 @@ from threading import thread
 
 
 ### Objects ###
-class SensorInterface:
+class sensor_interface:
     def __init__(self, sensor_name, sensor_obj, csv_writer = None, sample_rate=3):
         self.sensor_obj = sensor_obj
         self.sample_rate = sample_rate
@@ -46,9 +46,8 @@ class SensorInterface:
     def cleanup(self):
         if (self._csvfile != None):
             self._csvfile.close()
-        return True
+            return True
 		
-    def store_data_as_csv(self, time, data_point):
-        self._writer_object.writerow([time, data_point])
+    def store_data_as_csv(self, time, data_point_1, data_point_2, datapoint_3, datapoint_4, datapoint_5):
+        self._writer_object.writerow([time, data_point_1, data_point_2, datapoint_3, datapoint_4, datapoint_5])
         return True
-  
