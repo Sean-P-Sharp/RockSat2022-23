@@ -3,7 +3,7 @@ File Structure
 Contrbutors: Gage Gunn
 
 RRCC/ACC Rocksat-X 2023
-File Structure (LINUX)
+Data Handling Framework
 This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
@@ -36,7 +36,7 @@ class FileStructure:
     highest_id_path = {}
 
     def __init__(self):
-        self.data_path = r"/home/Data"
+        self.data_path = r"home\Data"
         self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
         self.subfolders = {
             "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
@@ -52,6 +52,7 @@ class FileStructure:
         except FileExistsError:
             print('Data folder already exist')
             pass
+        
         for folder in self.folders:
             path = os.path.join(self.data_path, folder)
             try:
@@ -73,7 +74,7 @@ class FileStructure:
 
     def write_to_folder(self, folder_name, subfolder_name, data):
         while True:
-            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.txt")
+            file_path = os.path.join(self.data_path, folder_name, subfolder_name, f"{self.ID} {fs.current_time}.csv")
             folder_path = os.path.join(self.data_path, folder_name, subfolder_name)
             if [file for file in os.listdir(folder_path) if file.split(fs.stop_char)[0] == str(self.ID)]:
                 print(f"File with ID {self.ID} already exists.")
@@ -97,6 +98,7 @@ def find_highest_id(path):
         if os.path.isdir(item_path):
             find_highest_id(item_path)
         else:
+            # Check if the file name starts with an ID
             id = item.split(" ")[0]
             if id.isdigit():
                 if fs.ID > fs.highest_id:
