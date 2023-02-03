@@ -1,0 +1,38 @@
+"""
+File Structure Test
+This file is for testing the ability to access the 'File_Structure' file for use for the 22-23 RockSat-X Program along with giving examples on how it is used
+"""
+
+### Librares ###
+import os
+from FS_proto import FileStructure #<< This is our class for FileStructure
+
+
+### Variables ###
+fs = FileStructure()
+
+
+
+# Create the folders
+fs.create_folders()
+fs.write_to_folder('Flight_Log', '', 'Folders have been created')
+
+# Creating files and writing the FIRST LINE of data
+test_number = str(20)
+test_flog = 'Testing'
+fs.write_to_folder("BME680", "Temperature", test_number) #Write to a subfolder
+fs.write_to_folder('MLX90640', '', test_number) #Write to a folder
+
+#Writing to the file with the highest ID in a given folder manually
+# folder_path = os.path.join(fs.data_path, "Flight_Log")
+# file_path = fs.highest_id_path[folder_path]
+# with open(file_path, 'a') as file:
+#     file.write("\nAdditional data")
+
+#Writing to the file with the highest id in a given folder using a method
+# folder_name = 'BME680'
+# subfolder_name = 'Temperature'
+# data = '123456'
+# fs.write_to_file(folder_name, subfolder_name, data)
+
+# fs.write_to_file('MLX90640', '', '123456')
