@@ -6,7 +6,6 @@ Rocksat-X 2022/2023
 
 import board 
 import busio
-import digitalio
 import adafruit_mlx90640
 import mlx90640_interface
 import time
