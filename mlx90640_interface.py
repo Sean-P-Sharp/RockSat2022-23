@@ -11,6 +11,7 @@ import adafruit_mlx90640
 import busio
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 i2c = board.I2C()   # uses board.SCL and board.SDA
 mlx = adafruit_mlx90640.MLX90640(i2c, debug=False)
@@ -26,5 +27,9 @@ class MLX90640_interface(sensor_interface.sensor_interface):
 
             plt.imshow(frame, cmap="hot")
             plt.axis("off")
-            plt.savefig("C:\Data\image.png")
+            
+            pictures_dir = os.path.join(os.path.expanduser("~"), "Pictures") # Get the path to the pictures directory
+            if not os.path.exists(pictures_dir): # Create the directory if it doesn't exist
+                os.makedirs(pictures_dir)
+            plt.savefig(os.path.join(pictures_dir, "image.png"))# Save the image to the pictures directory
             pass
