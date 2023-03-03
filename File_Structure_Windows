@@ -38,10 +38,10 @@ class FileStructure:
 
     def __init__(self):
         self.data_path = r"C:\Data"
-        self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
+        self.folders = ["BME680", "DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
-            "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+            "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
             }
         self.ID = 1
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
