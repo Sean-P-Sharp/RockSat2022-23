@@ -42,19 +42,4 @@ directory = os.path.expanduser("~/images")
 if not os.path.exists(directory):
     os.makedirs(directory)
 
-# Start data collection for all sensors
-bme_interface.start_data_collection()
-dof_interface.start_data_collection()
-mlx_interface.start_data_collection()
 
-# Take 5 images with the camera
-for i in range(5):
-    filename = os.path.join(directory, "image{}.jpg".format(i))
-    camera.capture_image(filename)
-    print("Captured image {} to {}".format(i, filename))
-    time.sleep(1)
-
-# Stop data collection for all sensors
-bme_interface.stop_data_collection()
-dof_interface.stop_data_collection()
-mlx_interface.stop_data_collection()
