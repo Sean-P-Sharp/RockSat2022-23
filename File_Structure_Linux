@@ -1,9 +1,11 @@
+# File_Structure
+
 '''
 File Structure
 Contrbutors: Gage Gunn
 
 RRCC/ACC Rocksat-X 2023
-Data Handling Framework
+File Structure (LINUX)
 This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
@@ -29,6 +31,7 @@ HOW TO USE
 ### Libraries ###
 import os
 from datetime import datetime
+import csv
 
 class FileStructure:
     
@@ -36,11 +39,12 @@ class FileStructure:
     highest_id_path = {}
 
     def __init__(self):
-        self.data_path = r"home\Data"
-        self.folders = ["BME680", "9DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
+        self.data_path = "/home/--/Data"
+        self.folders = ["BME680", "DOF", "MLX90640", "Aux_Cam", "Flight_Log", "VL53L1X", "BNO055"]
         self.subfolders = {
-            "BME680": ["Gas", "Humidity", "Pressure", "Temperature"],
-            "9DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+            "BME680": ["Humidity", "Pressure", "Temperature"],
+            "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"],
+            "BNO055": ["Accelerometer", "Magnetometer", "Gyroscope", "Euler_Angle", "Quaternion", "Linnear_Acceleration", "Gravity"]
             }
         self.ID = 1
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
@@ -90,6 +94,17 @@ class FileStructure:
         
         find_highest_id(fs.data_path)
 
+    def write_to_file(self, folder_name, subfolder_name, data):
+        if subfolder_name == '': #Check if there is no subfolder
+            folder_path = os.path.join(fs.data_path, folder_name)
+        else:
+            folder_path = os.path.join(fs.data_path, folder_name, subfolder_name)
+
+        file_path = fs.highest_id_path[folder_path]
+        with open(file_path, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([data])
+
 
 ### Functions ###
 def find_highest_id(path):
@@ -108,5 +123,3 @@ def find_highest_id(path):
 ### Variables ###
 fs = FileStructure()
 
-
-#Changes Needed
