@@ -1,5 +1,6 @@
 import Thermial_Image
 import VL53L0X_Interface
+import BNO055_Interface
 from sensors import sensor_interface
 #from sensors import bme680_interface, dof_interface, sensor_interface
 import board 
@@ -51,3 +52,7 @@ from adafruit_motorkit import MotorKit
 
 VL53L0X_thread = threading.Thread(target=VL53L0X_Interface.VL53OX_interface.sample_distance, args=())
 VL53L0X_thread.start()
+
+BNO055_thread = threading.Thread(target= BNO055_Interface.temprature, args=())
+BNO055_thread.start()
+
