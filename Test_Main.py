@@ -1,16 +1,21 @@
-# import Thermal_cam,Thermial_Image
 import Thermial_Image
-# from sensors import bme680_main, dof_main, dof_interface, bme680_interface
-# import board 
-# import busio
-# import digitalio
-# import adafruit_bme680
-# import adafruit_lsm9ds1
-# import adafruit_mlx90640
-# import aux_interface
-# import os
+import VL53L0X_Interface
+from sensors import sensor_interface
+#from sensors import bme680_interface, dof_interface, sensor_interface
+import board 
+import busio
+#import digitalio
+#import adafruit_bme680
+#import adafruit_lsm9ds1
+#import adafruit_mlx90640
+#import aux_interface
+import os
 import time
 import threading
+
+import RPi._GPIO as GPIO
+from adafruit_motorkit import MotorKit
+
 
 # # Initialize BME sensor
 # cs_bme = digitalio.DigitalInOut(board.D17)
@@ -35,10 +40,14 @@ import threading
 #     os.makedirs(directory)
 
 
+#photo_thread = threading.Thread(target=Thermial_Image.take_photos_every_5_seconds, args=())
+#photo_thread.start()
 
-photo_thread = threading.Thread(target=Thermial_Image.take_photos_every_5_seconds, args=())
-photo_thread.start()
+#BME_thread = threading.Tread(target = bme680_interface.BME680_interface.collect_data, args=())
+#BME_thread.start()
 
-while True:
-    time.sleep(2)
-    print("Hi Sean!")
+#Dof_thread = threading.Thread(target = dof_interface.dof_interface.collect_data)
+#Dof_thread.start()
+
+VL53L0X_thread = threading.Thread(target=VL53L0X_Interface.VL53OX_interface.sample_distance, args=())
+VL53L0X_thread.start()

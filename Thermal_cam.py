@@ -24,5 +24,6 @@ while True:
         for w in range(32):
             t = frame[h*32 + w]
             print("%0.1f, " % t, end="")
+            time.sleep(.05)
         print()
     print()

@@ -24,9 +24,7 @@ def temprature():
 while True:
         print("Temprature: {} degrees".format(sensor.temperature))
         
-        print (
-                "Temprature : {} degrees C".format(sensor.temperature())
-        )
+        print ("Temprature : {} degrees C".format(sensor.temperature))
 
         print("Accelerometer (m/s^2): {}".format(sensor.acceleration))
         print("Magnetometer (microteslas): {}".format(sensor.magnetic))
