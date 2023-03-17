@@ -1,9 +1,11 @@
+# File_Structure
+
 '''
 File Structure
 Contrbutors: Gage Gunn
 
 RRCC/ACC Rocksat-X 2023
-Data Handling Framework
+File Structure (WINDOWS)
 This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
@@ -38,10 +40,11 @@ class FileStructure:
 
     def __init__(self):
         self.data_path = r"C:\Data"
-        self.folders = ["BME680", "DOF", "MLX90640", "PTC08", "Geiger_Counter", "Flight_Log", "VL53L1X"]
+        self.folders = ["BME680", "DOF", "MLX90640", "Aux_Cam", "Flight_Log", "VL53L1X", "BNO055"]
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
-            "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"]
+            "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"],
+            "BNO055": ["Accelerometer", "Magnetometer", "Gyroscope", "Euler_Angle", "Quaternion", "Linnear_Acceleration", "Gravity"]
             }
         self.ID = 1
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
@@ -120,5 +123,3 @@ def find_highest_id(path):
 ### Variables ###
 fs = FileStructure()
 
-
-#Changes Needed
