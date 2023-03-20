@@ -99,8 +99,13 @@ class FileStructure:
             folder_path = os.path.join(fs.data_path, folder_name)
         else:
             folder_path = os.path.join(fs.data_path, folder_name, subfolder_name)
+            
+        find_highest_id(fs.data_path)
+        file_path = fs.highest_id_path.get(folder_path)
+        if file_path is None:
+            print(f"No file found for folder: {folder_name}, subfolder: {subfolder_name}")
+            return
 
-        file_path = fs.highest_id_path[folder_path]
         with open(file_path, 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([data])
@@ -117,6 +122,8 @@ def find_highest_id(path):
             id = item.split(" ")[0]
             if id.isdigit():
                 if fs.ID > fs.highest_id:
+                    fs.highest_id_path[path] = item_path
+                    fs.highest_id = int(id)
                     fs.highest_id_path[path] = item_path
 
 
