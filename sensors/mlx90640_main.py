@@ -11,9 +11,9 @@ import mlx90640_interface
 import time
 
 i2c = board.I2C()
-mlx = adafruit_mlx90640.mlx90640_I2C(i2c, debug=False)
+mlx = adafruit_mlx90640.MLX90640(i2c)
 
-mlx_interface = mlx90640_interface.mlx90640_interface("MLX90640", mlx, sample_rate=1)
+mlx_interface = mlx90640_interface.mlx90640_interface("MLX90640", mlx, sample_rate=0.0001)
 
 mlx_interface.start_data_collection()
 

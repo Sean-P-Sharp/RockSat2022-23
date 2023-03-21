@@ -5,7 +5,7 @@ import adafruit_bme680
 import bme680_interface
 import time
 
-cs=digitalio.DigitalInOut(board.D17)
+cs=digitalio.DigitalInOut(board.D5)
 spi=busio.SPI(board.SCLK,board.MOSI,board.MISO)
 bme = adafruit_bme680.Adafruit_BME680_SPI(spi,cs)
 

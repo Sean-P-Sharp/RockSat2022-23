@@ -12,11 +12,12 @@ from threading import Thread
 
 ### Objects ###
 class sensor_interface:
-    def __init__(self, sensor_name, sensor_obj, csv_writer = None, sample_rate=3):
+    def __init__(self, sensor_name, sensor_obj, csv_writer = None, sample_rate=3, last_val = 0xFFFF):
         self.sensor_obj = sensor_obj
         self.sample_rate = sample_rate
         self.sensor_name = sensor_name
         self._file_name = f"{sensor_name}_data.csv"
+        self._last_val = last_val
         
         if (csv_writer == None):
             self._csvfile = open(self._file_name, "a")
@@ -55,11 +56,14 @@ class sensor_interface:
         self._writer_object.writerow([time, data_point_1])
         return True
 
-        def store_data_as_csv(self, time, data_point_1, data_point_2, datapoint_3, datapoint_4):
-            self._writer_object.writerow([time, data_point_1, data_point_2, datapoint_3, datapoint_4])
+    def store_data_as_csv(self, time, data_point_1, data_point_2, datapoint_3, datapoint_4):
+        self._writer_object.writerow([time, data_point_1, data_point_2, datapoint_3, datapoint_4])
         return True
         
     def store_data_as_csv(self, data_point_1, data_point_2, data_point_3):
         self._writer_object.writerow([data_point_1, data_point_2, data_point_3])
         return True
- 
+    
+    def store_data_as_csv(self, time, data_point_1, data_point_2, datapoint_3, datapoint_4, data_point_5, data_point_6, datapoint_7, datapoint_8):
+        self._writer_object.writerow([time, data_point_1, data_point_2, datapoint_3, datapoint_4, data_point_5, data_point_6, datapoint_7, datapoint_8])
+        return True
