@@ -16,7 +16,6 @@ vl53 = adafruit_vl53l0x.VL53L0X(i2c)
 vl53.measurement_timing_budget = 200000
 range = vl53.range
 
-print("test")
 
 class VL53OX_interface(sensor_interface.sensor_interface):
     def __init__(self, name, VL53OX_object, csv_writer=None, sample_rate=3):
