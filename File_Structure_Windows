@@ -44,7 +44,7 @@ class FileStructure:
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
             "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"],
-            "BNO055": ["Accelerometer", "Magnetometer", "Gyroscope", "Euler_Angle", "Quaternion", "Linnear_Acceleration", "Gravity"]
+            "BNO055": ["Accelerometer", "Magnetometer", "Gyroscope", "Euler_Angle", "Quaternion", "Linear_Acceleration", "Gravity"]
             }
         self.ID = 1
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
