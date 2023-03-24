@@ -26,5 +26,9 @@ class dof_interface(sensor_interface.sensor_interface):
 			gyroscope = gyro_x, gyro_y, gyro_z
 			print("Gyroscope (rad/sec): ({0:0.3f},{1:0.3f},{2:0.3f})".format(gyro_x, gyro_y, gyro_z))
 
-			self.store_data_as_csv(acceleration, magnetic, gyroscope)
+			try:
+				self.store_data_as_csv(acceleration, magnetic, gyroscope)
+			except:
+				print("could not store data as csv for dof\n")
+				
 			time.sleep(1/self.sample_rate)

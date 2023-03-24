@@ -41,6 +41,6 @@ time.sleep(20)
 # stop the data collection
 bme_interface.stop_data_collection()
 bno055_interface.stop_data_collection()
-dof_interface.start_data_collection()
+dof_interface.stop_data_collection()
 
 
