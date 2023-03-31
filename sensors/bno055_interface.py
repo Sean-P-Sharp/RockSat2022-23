@@ -25,7 +25,7 @@ class bno055_interface(sensor_interface.sensor_interface):
                         
                         actual_time = time.time()
                         
-                        #temperature = self.sensor_obj.temperature
+                        temperature = self.sensor_obj.temperature
                         #print("Temperature: {} degrees C".format(self.sensor_obj.temperature))
                         
                         acceleration = self.sensor_obj.acceleration

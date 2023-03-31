@@ -16,7 +16,7 @@ dof_sample_rate = 100
 
 # comm interfaces
 cs=digitalio.DigitalInOut(board.D5)
-spi=busio.SPI(board.SCLK,board.MOSI,board.MISO)
+spi=board.SPI()
 i2c = board.I2C()
 
 # create the bme objects
@@ -24,23 +24,23 @@ bme = adafruit_bme680.Adafruit_BME680_SPI(spi,cs)
 bme_interface = BME680_interface("BME", bme, sample_rate=bme_sample_rate)
 
 # create the bno objects
-bno = adafruit_bno055.BNO055_I2C(i2c)
-bno055_interface = bno055_interface("BNO", bno, sample_rate=bno_sample_rate)
+#bno = adafruit_bno055.BNO055_I2C(i2c)
+#bno055_interface = bno055_interface("BNO", bno, sample_rate=bno_sample_rate)
 
 # create the 9dof objects
-dof = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
-dof_interface = dof_interface("9DOF", dof, sample_rate=dof_sample_rate)
+#dof = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
+#dof_interface = dof_interface("9DOF", dof, sample_rate=dof_sample_rate)
 
 # start the data collection
 bme_interface.start_data_collection()
-bno055_interface.start_data_collection()
-dof_interface.start_data_collection()
+#bno055_interface.start_data_collection()
+#dof_interface.start_data_collection()
 
 time.sleep(20)
 
 # stop the data collection
 bme_interface.stop_data_collection()
-bno055_interface.stop_data_collection()
-dof_interface.stop_data_collection()
+#bno055_interface.stop_data_collection()
+#dof_interface.stop_data_collection()
 
 
