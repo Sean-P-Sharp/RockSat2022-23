@@ -20,8 +20,11 @@ spi=board.SPI()
 i2c = board.I2C()
 
 # create the bme objects
-bme = adafruit_bme680.Adafruit_BME680_SPI(spi,cs)
-bme_interface = BME680_interface("BME", bme, sample_rate=bme_sample_rate)
+bme = adafruit_bme680.Adafruit_BME680_I2C(i2c, address=0x76)
+bme_interface = BME680_interface("BME_1", bme, sample_rate=bme_sample_rate)
+
+bme_2 = adafruit_bme680.Adafruit_BME680_I2C(i2c)
+bme_interface_2 = BME680_interface("BME_2", bme_2, sample_rate=bme_sample_rate)
 
 # create the bno objects
 #bno = adafruit_bno055.BNO055_I2C(i2c)
@@ -33,6 +36,7 @@ bme_interface = BME680_interface("BME", bme, sample_rate=bme_sample_rate)
 
 # start the data collection
 bme_interface.start_data_collection()
+bme_interface_2.start_data_collection()
 #bno055_interface.start_data_collection()
 #dof_interface.start_data_collection()
 
@@ -40,6 +44,7 @@ time.sleep(20)
 
 # stop the data collection
 bme_interface.stop_data_collection()
+bme_interface_2.stop_data_collection()
 #bno055_interface.stop_data_collection()
 #dof_interface.stop_data_collection()
 
