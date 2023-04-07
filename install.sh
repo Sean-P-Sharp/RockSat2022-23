@@ -13,8 +13,8 @@ echo "Do you wish to enable the service (the Pi will boot in to the program on n
 while true; do
     read -p "$* [y/n]: " yn
     case $yn in
-        [Yy]*) systemctl enable rocksat.service && echo "Enabled rocksat.service systemd unit file" ;; 
-        [Nn]*) echo "Service not enabled, when you need to, use 'sudo systemctl enable rocksat.service'" ;;
+        [Yy]*) systemctl enable rocksat.service ; echo "Enabled rocksat.service systemd unit file" ; break ;; 
+        [Nn]*) echo "Service not enabled, when you need to, use 'sudo systemctl enable rocksat.service'" ; break ;;
     esac
 done
 
