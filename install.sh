@@ -7,7 +7,7 @@
 echo "Please make sure that you are running this script as the root user, eg. 'sudo install.sh'"
 
 # Install the systemd unit file and notify the user of how to enable it
-cp ~/RockSat2020/vrse.service /etc/systemd/system
+cp ~/rocksat.service /etc/systemd/system
 echo "Installed systemd unit file to /etc/systemd/system"
 echo "Do you wish to enable the service (the Pi will boot in to the program on next boot)? "
 while true; do
