@@ -1,0 +1,15 @@
+[Unit]
+Description=RockSat 2022-23 Service
+Documentation=https://github.com/Sean-P-Sharp/RockSat2022-23
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+WorkingDirectory=/home/pi/RockSat2022-23
+Type=simple
+User=pi
+ExecStart=/usr/bin/python /home/pi/RockSat2022-23/main.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
