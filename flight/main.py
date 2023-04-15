@@ -18,15 +18,19 @@ bnoRate = configs["sample_rates"]["bno"]
 dofRate = configs["sample_rates"]["dof"]
 mlxRate = configs["sample_rates"]["mlx"]
 maxMotorDuration = configs["motor_max_time"]
+# these are the GPIO pins being used as outputs
 outputGpioPins = configs["output_gpio"]
+# these are the GPIO pins being used as inputs
 inputGpioPins = configs["input_gpio"]
+# gpio mode
+gpioMode = configs["gpio_mode"]
 
 # create the sensor factory
 sensorFac = SensorInterfaceFactory()
 # create the sensor manager
 sensorMan = SensorManager(sensorFac, bme1Rate, bme2Rate, bnoRate, dofRate, mlxRate)
 # create the GPIO manager
-gpioMan = PiGpioManager(inputGpioPins, outputGpioPins)
+gpioMan = PiGpioManager(inputGpioPins, outputGpioPins, gpioMode)
 
 # start collecting data for the sensors
 sensorMan.startSensors()
