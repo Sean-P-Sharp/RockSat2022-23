@@ -11,7 +11,7 @@ from threading import Thread
 
 
 ### Objects ###
-class sensor_interface:
+class ISensorInterface:
     def __init__(self, sensor_name, sensor_obj, csv_writer = None, sample_rate=3, last_val = 0xFFFF):
         self.sensor_obj = sensor_obj
         self.sample_rate = sample_rate
@@ -25,6 +25,9 @@ class sensor_interface:
         else:
             self._writer_object = csv_writer
 
+        #TODO : this needs to be reformatted so "data" is the actual data values you're collecting
+        # example : "time, temperature, accelerometer_x, accelerometer_y" etc
+        # this will be different for every sensor
         self._writer_object.writerow(["time, data"])
 
         self._collection_thread = Thread(target=self.collect_data) 

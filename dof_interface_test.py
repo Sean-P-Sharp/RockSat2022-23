@@ -4,7 +4,7 @@ Contributor(s): Gage Gunn, Angela Gabay, Vu Dang
 Rocksat-X 2022/2023
 '''
 
-import sensor_interface
+import ISensorInterface
 from File_Structure_Linux import FileStructure
 import time
 
@@ -14,7 +14,7 @@ fs.create_folders()
 fs.write_to_folder('DOF', 'Magnetometer', 'Mag Created')
 fs.write_to_folder('DOF', 'Accelerometer', 'Accel Created')
 fs.write_to_folder('DOF', 'Gyroscope', 'Gyro Created')
-class dof_interface(sensor_interface.sensor_interface):
+class DofInterface(ISensorInterface.ISensorInterface):
 	def __init__(self, name, DOF_object, csv_writer=None, sample_rate=3):
 		super().__init__(name, DOF_object, csv_writer=csv_writer, sample_rate=sample_rate)
 

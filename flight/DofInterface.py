@@ -4,10 +4,10 @@ Contributor(s): Gage Gunn, Angela Gabay
 Rocksat-X 2022/2023
 '''
 
-import sensor_interface
+import ISensorInterface
 import time
 
-class dof_interface(sensor_interface.sensor_interface):
+class DofInterface(ISensorInterface.ISensorInterface):
 	def __init__(self, name, DOF_object, csv_writer=None, sample_rate=3):
 		super().__init__(name, DOF_object, csv_writer=csv_writer, sample_rate=sample_rate)
 

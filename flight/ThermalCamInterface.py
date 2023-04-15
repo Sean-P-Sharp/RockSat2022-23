@@ -10,13 +10,13 @@ import time
 
 # FILENAME = "mlx.jpg"
 
-import sensor_interface
+import ISensorInterface
 import time
 
-class thermal_cam_interface(sensor_interface.sensor_interface):
+class ThermalCamInterface(ISensorInterface.ISensorInterface):
     
     def _init_(self, name, THERMAL_object, csv_writer=None, sample_rate=3):
-        super(thermal_cam_interface, self)._init_(name, THERMAL_object, csv_writer=csv_writer, sample_rate=sample_rate)
+        super(ThermalCamInterface, self)._init_(name, THERMAL_object, csv_writer=csv_writer, sample_rate=sample_rate)
 
     def save_photo_to(self, file_name):
         MINTEMP = 25.0 # Low range of temp

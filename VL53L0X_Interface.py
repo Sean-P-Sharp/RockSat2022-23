@@ -2,7 +2,7 @@ import time
 import board
 import busio
 import adafruit_vl53l0x
-from sensors import sensor_interface
+from sensors import ISensorInterface
 
 #initilize the I2c
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -17,7 +17,7 @@ vl53.measurement_timing_budget = 200000
 range = vl53.range
 
 
-class VL53OX_interface(sensor_interface.sensor_interface):
+class VL53OX_interface(ISensorInterface.ISensorInterface):
     def __init__(self, name, VL53OX_object, csv_writer=None, sample_rate=3):
        super().__init__(name, VL53OX_object, csv_writer=csv_writer, sample_rate=sample_rate)
     

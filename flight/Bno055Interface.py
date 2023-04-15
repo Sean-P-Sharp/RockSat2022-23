@@ -1,13 +1,13 @@
-import sensor_interface
+import ISensorInterface
 import time
 
 
 last_val = 0xFFFF
 
-class bno055_interface(sensor_interface.sensor_interface):
+class Bno055Interface(ISensorInterface.ISensorInterface):
 
         def _init_(self, name, BNO_object, csv_writer=None, sample_rate=3):
-                super(bno055_interface, self)._init_(name, BNO_object, csv_writer=csv_writer, sample_rate=sample_rate, last_val=0xFFFF)
+                super(Bno055Interface, self)._init_(name, BNO_object, csv_writer=csv_writer, sample_rate=sample_rate, last_val=0xFFFF)
         
         def temperature(self):
                 result = self.sensor_obj.temperature

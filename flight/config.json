@@ -1,0 +1,12 @@
+{
+    "sample_rates": {
+        "bme_1" : 1,
+        "bme_2" : 1,
+        "bno" : 1,
+        "dof" : 1,
+        "mlx" : 1
+    },
+    "motor_max_time" : 10,
+    "output_gpio" : [1, 2, 3, 4, 5],
+    "input_gpio" : [6, 7, 8, 9, 10]
+}

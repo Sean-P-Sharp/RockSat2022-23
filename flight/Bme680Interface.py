@@ -3,10 +3,10 @@ Concrete implementation for BME680 sensor interface
 Contrbutors: Gage Gunn, Angela Gabay, Vu Dang
 RRCC/ACC Rocksat-X 2023
 '''
-import sensor_interface
+import ISensorInterface
 import time
 
-class BME680_interface(sensor_interface.sensor_interface):
+class Bme680Interface(ISensorInterface.ISensorInterface):
     def __init__(self, name, BME680_object, csv_writer=None, sample_rate=3):
         super().__init__(name, BME680_object, csv_writer=csv_writer, sample_rate=sample_rate)
 
