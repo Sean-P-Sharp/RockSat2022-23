@@ -11,6 +11,9 @@ import adafruit_lsm9ds1
 import adafruit_mlx90640
 
 class SensorInterfaceFactory:
+    """
+    Class to create all the sensor interfaces
+    """
     def __init__(self):
         self._bme_1_interface = None
         self._bme_2_interface = None
