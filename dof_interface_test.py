@@ -41,4 +41,6 @@ class DofInterface(ISensorInterface.ISensorInterface):
 			fs.write_to_file("DOF", "Gyroscope", gyroscope)
 
 			time.sleep(1/self.sample_rate)
-			
+		
+		#Update Flight Log
+		fs.write_to_file('Flight_Log', '', 'DOF Stopped Data Collection')
