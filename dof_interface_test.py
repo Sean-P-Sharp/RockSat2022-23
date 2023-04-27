@@ -10,10 +10,12 @@ import time
 
 fs = FileStructure()
 
-fs.create_folders()
+#Create new file for each set of data
 fs.write_to_folder('DOF', 'Magnetometer', 'Mag Created')
 fs.write_to_folder('DOF', 'Accelerometer', 'Accel Created')
 fs.write_to_folder('DOF', 'Gyroscope', 'Gyro Created')
+
+
 class DofInterface(ISensorInterface.ISensorInterface):
 	def __init__(self, name, DOF_object, csv_writer=None, sample_rate=3):
 		super().__init__(name, DOF_object, csv_writer=csv_writer, sample_rate=sample_rate)
@@ -24,7 +26,7 @@ class DofInterface(ISensorInterface.ISensorInterface):
 			accel_x, accel_y, accel_z = self.sensor_obj.acceleration
 			acceleration = accel_x, accel_y, accel_z
 			print("Acceleration (m/s^2): ({0:0.3f},{1:0.3f},{2:0.3f})".format(accel_x, accel_y, accel_z))
-			fs.write_to_file("DOF", "Accelerometer", acceleration)
+			fs.write_to_file("DOF", "Accelerometer", acceleration) 
 
 			mag_x, mag_y, mag_z = self.sensor_obj.magnetic
 			magnetic = mag_x, mag_y, mag_z
@@ -38,9 +40,3 @@ class DofInterface(ISensorInterface.ISensorInterface):
 
 			time.sleep(1/self.sample_rate)
 			
-
-#Changes
-'''
-1. Need to create files within the main rather than interface
-2. Update files in interface instead of 'write_to_folder'
-'''
