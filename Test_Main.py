@@ -22,7 +22,7 @@ from adafruit_motorkit import MotorKit
 
 #Create folders
 fs.create_folders()
-fs.write_to_folder('Flight_Log', '', 'Folders Checked\n')
+fs.write_to_folder('Flight_Log', '', 'Folders Checked - ' + datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec") + '\n')
 
 # # Initialize BME sensor
 # cs_bme = digitalio.DigitalInOut(board.D17)
