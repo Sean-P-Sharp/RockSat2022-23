@@ -15,12 +15,14 @@ fs.write_to_folder('DOF', 'Magnetometer', 'Mag Created')
 fs.write_to_folder('DOF', 'Accelerometer', 'Accel Created')
 fs.write_to_folder('DOF', 'Gyroscope', 'Gyro Created')
 
-
 class DofInterface(ISensorInterface.ISensorInterface):
 	def __init__(self, name, DOF_object, csv_writer=None, sample_rate=3):
 		super().__init__(name, DOF_object, csv_writer=csv_writer, sample_rate=sample_rate)
 
 	def collect_data(self):
+		
+		#Update Flight Log
+		fs.write_to_file('Flight_Log', '', 'DOF Began Data Collection')
 		
 		while not self.stop_thread:
 			accel_x, accel_y, accel_z = self.sensor_obj.acceleration
