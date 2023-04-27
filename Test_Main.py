@@ -14,9 +14,15 @@ import os
 import time
 import threading
 
+from File_Structure_Linux import FileStructure
+fs = FileStructure()
+
 import RPi._GPIO as GPIO
 from adafruit_motorkit import MotorKit
 
+#Create folders
+fs.create_folders()
+fs.write_to_folder('Flight_Log', '', 'Folders Checked\n')
 
 # # Initialize BME sensor
 # cs_bme = digitalio.DigitalInOut(board.D17)
