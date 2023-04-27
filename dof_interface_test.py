@@ -22,7 +22,7 @@ class DofInterface(ISensorInterface.ISensorInterface):
 	def collect_data(self):
 		
 		#Update Flight Log
-		fs.write_to_file('Flight_Log', '', 'DOF Began Data Collection')
+		fs.write_to_file('Flight_Log', '', 'DOF Began Data Collection - ' + datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec"))
 		
 		while not self.stop_thread:
 			accel_x, accel_y, accel_z = self.sensor_obj.acceleration
@@ -43,4 +43,4 @@ class DofInterface(ISensorInterface.ISensorInterface):
 			time.sleep(1/self.sample_rate)
 		
 		#Update Flight Log
-		fs.write_to_file('Flight_Log', '', 'DOF Stopped Data Collection')
+		fs.write_to_file('Flight_Log', '', 'DOF Stopped Data Collection - ' + datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec"))
