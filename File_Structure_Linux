@@ -11,20 +11,7 @@ This file will
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
 3. Allow data to be written to said files
 
------------------------------------------------------------------------
-
-HOW TO USE
-1. Create Folders - fs.create_folders() 
-2. Create a new file - fs.write_to_folder("Folder", "Sub Folder (if none just leave as '')", [value])
-3. Write to the most recently created file - 
-    folder_path = os.path.join(Main File Path, "Folder", "Subfolder") << If no subfolder, remove the last part
-    file_path = highest_id_path[folder_path]
-    with open(file_path, 'a') as file:
-        file.write("\nAdditional data")
-
-*Notes*
-1. Make sure to assign correct file path to create folders to
-'''
+----------------------------------------------------------------------
 
 
 
@@ -40,7 +27,7 @@ class FileStructure:
 
     def __init__(self):
         self.data_path = "/home/--/Data"
-        self.folders = ["BME680", "DOF", "MLX90640", "Aux_Cam", "Flight_Log", "VL53L1X", "BNO055"]
+        self.folders = ["BME680", "DOF", "MLX90640", "Flight_Log", "VL53L1X", "BNO055"]
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
             "DOF": ["Accelerometer", "Magnetometer", "Gyroscope"],
