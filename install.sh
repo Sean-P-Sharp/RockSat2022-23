@@ -7,11 +7,12 @@
 echo "Please make sure that you are running this script as the root user, eg. 'sudo install.sh'"
 
 # *** Install pip3 dependencies
-pip3 install adafruit-circuitpython-bno055
-pip3 install adafruit-circuitpython-vl53l0x
-pip3 install adafruit-circuitpython-lsm9ds1
-pip3 install adafruit-circuitpython-bme680
-pip3 install adafruit-circuitpython-mlx90640
+pip3 install adafruit-blinka                    # Adafruit Circutpython, etc.
+pip3 install adafruit-circuitpython-bno055      # Absolute Orientation Sensor
+pip3 install adafruit-circuitpython-vl53l0x     # Time of Flight Distance/Ranging Sensor
+pip3 install adafruit-circuitpython-lsm9ds1     # Accelerometer/Magnetometer/Gyroscope Sensor
+pip3 install adafruit-circuitpython-bme680      # Temperature, Humidity, Pressure and Gas Sensor
+pip3 install adafruit-circuitpython-mlx90640    # Infrared Thermal Camera Sensor
 
 # Install the systemd unit file and notify the user of how to enable it
 cp ~/rocksat.service /etc/systemd/system
