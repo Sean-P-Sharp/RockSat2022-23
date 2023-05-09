@@ -6,6 +6,9 @@
 # Nofity user instructions
 echo "Please make sure that you are running this script as the root user, eg. 'sudo install.sh'"
 
+# Disable sudo password (so that the payload can shut itself down)
+echo "pi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 # *** Install pip3 dependencies
 pip3 install adafruit-blinka                    # Adafruit Circutpython, etc.
 pip3 install adafruit-circuitpython-bno055      # Absolute Orientation Sensor

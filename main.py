@@ -32,7 +32,10 @@
             $ python main.py --motor --sensors       # order of arguments makes no difference
         
         (no arguments)
-            Run all functions of the payload. To be used for full testing or flight mode. When no 
+            Run all functions of the payload. To be used for full testing or flight mode.
+
+        --debug
+            Debug mode. Does not shut down the Pi after splashdown condition as to not inconvenience the tester.
 
         --reset
             Resets the persistence file of the payload. If reset is not supplied, the payload will assume power failure and resume from
@@ -82,23 +85,23 @@ import sensors.sensors as sensors
 def main(commandLineArguments):
     # Initialize the logging module and log the startup time of the payload in the UNIX epoch
     #   Create a log folder if it does not exist yet
-    os.system('mkdir -p ./logs')
+    os.system("mkdir -p ./logs")
     #   Get the boot time
     bootTime = time.time()
     #   Rotating file handler (large file size, so logs will probably not be rotated)
     rotatingFileHandler = RotatingFileHandler(
-        filename=f'logs/payload_log_{str(int(bootTime))}.log',
-        mode='a',
+        filename=f"logs/payload_log_{str(int(bootTime))}.log",
+        mode="a",
         maxBytes=20 * 1024 * 1024,
         backupCount=2,
-        encoding='utf-8',
+        encoding="utf-8",
         delay=0
     )
     #   By default, log at the debug level using the file handler that was created
     logging.basicConfig(
         level=logging.DEBUG,
-        format='[%(asctime)s.%(msecs)03d][%(module)7s][%(levelname)8s]\t%(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
+        format="[%(asctime)s.%(msecs)03d][%(module)7s][%(levelname)8s]\t%(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[rotatingFileHandler]
     )
     #   In addition to outputting to the file, output all logs to console so they can be viewed live while debugging
@@ -117,14 +120,30 @@ def main(commandLineArguments):
     #   If no arguments are given when the file is run from the command line, run all functions
     runAll = len(commandLineArguments) == 1
     #   Sensors
-    if ('--sensors' in commandLineArguments or runAll):
+    sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
+    if '--sensors' in commandLineArguments or runAll:
         sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime])
         sensorThread.start()
 
-    # Loop in place of 
+    # Loop in place of timer event handling
     time.sleep(10)
 
-
+    # Stop the sensor thread
+    if sensorThread != None:
+        sensorThread.terminate()
+        sensorThread.join()
+        sensorThread.close()
+        logger.info("Finished stopping sensor thread")
+    
+    # Shutdown the pi
+    if "--debug" not in commandLineArguments:
+        logger.info("Shutting down electronics in preparation for splashdown!")
+        time.sleep(1)
+        os.system("sudo shutdown -h now")
+        return
+    else:
+        logger.info("--debug flag detected, electronics will not be shut down. Exiting script...")
+        return
 
 # If this file is run on its own (which it will be, run the main method) 
 if __name__ == "__main__":

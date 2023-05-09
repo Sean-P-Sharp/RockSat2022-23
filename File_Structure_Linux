@@ -12,7 +12,7 @@ This file will
 3. Allow data to be written to said files
 
 ----------------------------------------------------------------------
-
+'''
 
 
 ### Libraries ###
@@ -116,4 +116,3 @@ def find_highest_id(path):
 
 ### Variables ###
 fs = FileStructure()
-'''
