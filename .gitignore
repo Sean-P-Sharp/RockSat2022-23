@@ -3,6 +3,7 @@
 # * * *  
 logs
 data
+state
 
 # * * * 
 # Python Gitignore (do not commit MacOS indexing files to verison control)

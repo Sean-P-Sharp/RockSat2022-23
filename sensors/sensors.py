@@ -5,6 +5,7 @@
 # Import dependencies
 import logging
 import time
+import os
 
 # Adafruit circutpython
 import board
@@ -72,6 +73,7 @@ def main(bootTime):
 
     # Create the data file
     logger.info(f"Writing sensor data to file: ./data/sensors_{str(int(bootTime))}.log")
+    os.system("mkdir -p data")
     dataFile = open(f"data/sensors_{str(int(bootTime))}.log", "a")
 
     # Configure the order of the columns in the CSV file

@@ -85,7 +85,7 @@ import sensors.sensors as sensors
 def main(commandLineArguments):
     # Initialize the logging module and log the startup time of the payload in the UNIX epoch
     #   Create a log folder if it does not exist yet
-    os.system("mkdir -p ./logs")
+    os.system("mkdir -p logs")
     #   Get the boot time
     bootTime = time.time()
     #   Rotating file handler (large file size, so logs will probably not be rotated)
