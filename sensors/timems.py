@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Time library
 import time
@@ -19,4 +19,6 @@ class TimeMS(RockSatSensor):
         return self.header
     
     def poll(self):
-        return [int(round(time.time() * 1000))]
+        return {
+            "Time": int(round(time.time() * 1000))
+        }

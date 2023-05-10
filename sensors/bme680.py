@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Adafruit Library for the BME680
 import adafruit_bme680
@@ -13,7 +13,7 @@ import adafruit_bme680
 class BME680(RockSatSensor):
     def __init__(self, i2c):
         # Configure the sensor on the supplied i2c bus
-        self.bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c)
+        self.bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, 0x76)
         # Define the header
         self.header = [
             "BME680 Temperature",

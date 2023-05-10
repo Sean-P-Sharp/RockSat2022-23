@@ -7,7 +7,6 @@ Wants=network-pre.target
 [Service]
 WorkingDirectory=/home/pi/RockSat2022-23
 Type=simple
-User=pi
 ExecStart=/usr/bin/python /home/pi/RockSat2022-23/main.py
 Restart=on-failure
 

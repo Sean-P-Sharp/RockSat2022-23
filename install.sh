@@ -6,8 +6,11 @@
 # Nofity user instructions
 echo "Please make sure that you are running this script as the root user, eg. 'sudo install.sh'"
 
+# Enable root login over ssh
+echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+
 # Disable sudo password (so that the payload can shut itself down)
-echo "pi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# echo "pi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # *** Install pip3 dependencies
 pip3 install adafruit-blinka                    # Adafruit Circutpython, etc.

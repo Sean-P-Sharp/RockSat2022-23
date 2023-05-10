@@ -3,8 +3,6 @@
 """
 
 # Import dependencies
-import logging
-import time
 import os
 
 # Adafruit circutpython
@@ -12,43 +10,26 @@ import board
 import busio
 
 # Import RockSat sensors
-from timems import TimeMS
-from mlx90640 import MLX90640
-from bme680 import BME680
-from bno055 import BNO055
-from vl53l0x import VL53L0X
-from lsm9ds1 import LSM9DS1
-
-# Template for a basic RockSat sensor
-#   Each sensor is going to need to return a dictionary containing the data returned by the sensor and an ordered array of the headers for the CSV file
-class RockSatSensor:
-    # Initialize the sensor on the i2c bus
-    def __init__(self):
-        pass
-
-    # Get the data column labels for the data returned by this sensor
-    def getHeader(self):
-        return self.header
-        pass
-
-    # Poll for the next dataset from this sensor
-    def poll(self):
-        pass
+from sensors.timems import TimeMS
+from sensors.bme680 import BME680
+from sensors.bno055 import BNO055
+from sensors.vl53l0x import VL53L0X
+from sensors.lsm9ds1 import LSM9DS1
 
 # Main sensor thread
-def main(bootTime):
-    # Get the active logging object
-    logger = logging.getLogger(__name__)
-
+def main(bootTime, logger):
     # Log from this new thread
     logger.info("Started sensor thread")
 
     # Start the I2C interface for the sensors
+    i2c = None
     try:
         i2c = busio.I2C(board.SCL, board.SDA)
-        logging.info('Started I2C interface for sensors')
-    except:
-        logging.critical('Failed to enable i2c interface, the sensor thread will now crash')
+        logger.info("Started I2C interface for sensors")
+        print(i2c.scan())
+    except Exception as e:
+        logger.critical("Failed to enable i2c interface, the sensor thread will now crash!")
+        logger.critical(f"Exception: {e}")
         return
 
     # Desired sensors
@@ -73,31 +54,15 @@ def main(bootTime):
             sensorInstance = Sensor(i2c)
             if sensorInstance: sensors.append(sensorInstance)
             logger.info(f"Initialized {Sensor.__name__} over I2C")
-        except:
+        except Exception as e:
             # Log failure
-            logger.critical(f"Failed to initialize {Sensor.__name__} over I2C")
+            logger.critical(f"Failed to initialize {Sensor.__name__} over I2C. Exception: {e}")
     logger.info("Finished initializing sensors")
-
-    # MLX90640 Thermal Camera (special)
-    mlx = None
-    try:
-        # Start the sensor
-        mlx = MLX90640(i2c)
-        logger.info("Initialized MLX90640 thermal camera")
-    except:
-        # Log failure
-        logger.critical("Failed to initialize MLX90640 thermal camera")
 
     # Create the data file
     logger.info(f"Writing sensor data to file: ./data/sensors_{str(int(bootTime))}.csv")
     os.system("mkdir -p data")
     dataFile = open(f"data/sensors_{str(int(bootTime))}.csv", "a")
-
-    # Create the MLX thermal camera data file
-    mlxDataFile = None
-    if mlx != None:
-        logger.info(f"Writing MLX thermal camera frames to file: ./data/mlx_{str(int(bootTime))}.rstf") # rstf -> RockSat thermal frame
-        mlxDataFile = open(f"data/mlx_{str(int(bootTime))}.rstf", "a")
 
     # Configure the order of the columns in the CSV file
     sensorOrder = []
@@ -105,7 +70,7 @@ def main(bootTime):
     for sensor in sensors: sensorOrder = sensorOrder + sensor.getHeader()
 
     # Write the header line to the CSV file as the first line
-    dataFile.write(sensorOrder.join(",") + "\n")
+    dataFile.write(",".join(sensorOrder) + "\n")
 
     # Try/Except block to catch KeyboardInterrupt eg. SIGTERM
     try:
@@ -115,27 +80,24 @@ def main(bootTime):
             data = {}
             for sensor in sensors:
                 # Add the sensor data to the current data
-                data = dict(data, **sensor.poll)
+                next = sensor.poll()
+                data = { **data, **next }
 
             # Construct the CSV line
             csvLine = ""
             i = 0
             for column in sensorOrder:
                 # Get the data for this column
-                csvLine += data[column]
+                csvLine += str(data[column])
                 # Add a comma unless this is the last value
                 if i != len(sensorOrder) - 1: csvLine += ","
+                i += 1
             csvLine += "\n"
-
-            # Construct a line for the MLX thermal camera
-            mlxLine = f"{data['Time']} --> {mlx.poll()['MLX90640 Thermal Frame'].join(',')}" if mlx != None else None
 
             # Write the CSV line to the file
             dataFile.write(csvLine)
-            if mlx != None: mlxDataFile.write(mlxLine)
             # Force a flush to ensure that no data is being built up in the memory buffer that could be lost during power failure
             dataFile.flush()
-            if mlx != None: mlxDataFile.flush()
     # Capture SIGTERM
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")

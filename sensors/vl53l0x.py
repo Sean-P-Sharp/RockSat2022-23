@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Adafruit Library for the VL53L0X
 import adafruit_vl53l0x
@@ -13,7 +13,7 @@ import adafruit_vl53l0x
 class VL53L0X(RockSatSensor):
     def __init__(self, i2c):
         # Configure the sensor on the supplied i2c bus
-        self.vl53l0x = adafruit_vl53l0x.VL53L0X(i2c)
+        self.vl53l0x = adafruit_vl53l0x.VL53L0X(i2c, 0x29)
         # Define the header
         self.header = [
             "VL54L0X Distance",

@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Adafruit Library for the LSM9DS1
 import adafruit_lsm9ds1

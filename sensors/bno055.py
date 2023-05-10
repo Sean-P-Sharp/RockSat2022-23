@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Adafruit Library for the BNO055
 import adafruit_bno055
@@ -13,7 +13,7 @@ import adafruit_bno055
 class BNO055(RockSatSensor):
     def __init__(self, i2c):
         # Configure the sensor on the supplied i2c bus
-        self.bno055 = adafruit_bno055.BNO055_I2C(i2c)
+        self.bno055 = adafruit_bno055.BNO055_I2C(i2c, 0x28)
         # Define the header
         self.header = [
             "BNO055 Temperature",
@@ -34,7 +34,7 @@ class BNO055(RockSatSensor):
             "BNO055 Temperature": self.bno055.temperature,
             "BNO055 Acceleration": self.bno055.acceleration,
             "BNO055 Magnetic": self.bno055.magnetic,
-            "BNO055 Gyroscope": self.bno055.gyroscope,
+            "BNO055 Gyroscope": self.bno055.gyro,
             "BNO055 Euler": self.bno055.euler,
             "BNO055 Quaternion": self.bno055.quaternion,
             "BNO055 Linear Acceleration": self.bno055.linear_acceleration,

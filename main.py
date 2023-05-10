@@ -44,6 +44,9 @@
 
         --sensors
             Runs the sensor thread. This will run all sensors and output data to the ./data directory.
+
+        --thermal
+            Runs the thermal camera thread. This will run the thermal camera over I2C and output frames to a file in the ./data directory.
         
         --motor
             Throttles the motor and obeys the signals of the physical limit switches.
@@ -74,12 +77,17 @@ import time
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+import configparser
 import multiprocessing as multiprocessing
 import sys
 import datetime
 
+# RPi GPIO
+import RPi.GPIO as GPIO
+
 # Import RockSat experiment modules
 import sensors.sensors as sensors
+import sensors.thermal as thermal
 
 # Main Method    str(datetime.datetime.now().strftime("%Y-%m-%d T%H:%M:%S"))
 def main(commandLineArguments):
@@ -112,7 +120,7 @@ def main(commandLineArguments):
     logger.info(f'CC of CO payload finished booting at {round(bootTime * 1000)} (UNIX millis)')
 
     # Initialize multiprocessing
-    multiprocessing.set_start_method('spawn')
+    multiprocessing.set_start_method('fork')
     processQueue = multiprocessing.Queue()
     logger.info('Initialized multiprocessing')
     
@@ -122,14 +130,31 @@ def main(commandLineArguments):
     #   Sensors
     sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--sensors' in commandLineArguments or runAll:
-        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime])
+        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime, logger])
         sensorThread.start()
+    #   Thermal Camera
+    thermalThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
+    if '--thermal' in commandLineArguments or runAll:
+        thermalThread = multiprocessing.Process(target=thermal.main, args=[bootTime, logger])
+        thermalThread.start()
 
     # Configure the GPIO pins
-    
+    GPIO.setmode(GPIO.BCM)
+    """GPIO.setup(ter, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(te1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(lse, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(te2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(lsr, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)"""
 
     # Loop in place of timer event handling
     time.sleep(10)
+
+    # Stop the thermal thread
+    if thermalThread != None:
+        thermalThread.terminate()
+        thermalThread.join()
+        thermalThread.close()
+        logger.info("Finished stopping thermal camera thread")
 
     # Stop the sensor thread
     if sensorThread != None:
@@ -142,7 +167,7 @@ def main(commandLineArguments):
     if "--debug" not in commandLineArguments:
         logger.info("Shutting down electronics in preparation for splashdown!")
         time.sleep(1)
-        os.system("sudo shutdown -h now")
+        os.system("shutdown -h now")
         return
     else:
         logger.info("--debug flag detected, electronics will not be shut down. Exiting script...")

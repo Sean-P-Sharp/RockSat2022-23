@@ -4,7 +4,7 @@
 """
 
 # Base RockSatSensor Class
-from sensors import RockSatSensor
+from sensors.base import RockSatSensor
 
 # Adafruit Library for the MLX90640
 import adafruit_mlx90640
@@ -15,7 +15,7 @@ class MLX90640(RockSatSensor):
         # Configure the sensor on the supplied i2c bus
         self.mlx90640 = adafruit_mlx90640.MLX90640(i2c)
         # Set the refresh rate
-        mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_1_HZ
+        self.mlx90640.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_1_HZ
         # Define the header
         self.header = [
             "MLX90640 Thermal Frame",
