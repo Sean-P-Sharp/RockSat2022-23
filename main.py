@@ -147,7 +147,7 @@ def main(commandLineArguments):
     GPIO.setup(lsr, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)"""
 
     # Loop in place of timer event handling
-    time.sleep(10)
+    time.sleep(600)
 
     # Stop the thermal thread
     if thermalThread != None:

@@ -4,6 +4,7 @@
 
 # Import dependencies
 import os
+import time
 
 # Adafruit circutpython
 import board
@@ -80,8 +81,11 @@ def main(bootTime, logger):
             data = {}
             for sensor in sensors:
                 # Add the sensor data to the current data
-                next = sensor.poll()
-                data = { **data, **next }
+                try:
+                    next = sensor.poll()
+                    data = { **data, **next }
+                except Exception as e:
+                    logger.critical(f"Failed to poll for next value on sensor {sensor.__name__} at {str(int(time.time() * 1000))}")
 
             # Construct the CSV line
             csvLine = ""
@@ -101,6 +105,5 @@ def main(bootTime, logger):
     # Capture SIGTERM
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")
-        if mlx != None: mlxDataFile.close()
         dataFile.close()
         return
