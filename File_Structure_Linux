@@ -46,7 +46,7 @@ class FileStructure:
     highest_id_path = {}
 
     def __init__(self):
-        self.data_path = "/home/--/Data"
+        self.data_path = "/home/Pi/Desktop/Data"
         self.folders = ["BME680", "DOF", "MLX90640", "Flight_Log", "VL53L1X", "BNO055"]
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
