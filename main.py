@@ -125,6 +125,9 @@ def main(commandLineArguments):
         sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime])
         sensorThread.start()
 
+    # Configure the GPIO pins
+    
+
     # Loop in place of timer event handling
     time.sleep(10)
 
