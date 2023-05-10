@@ -3,7 +3,6 @@
         Temperature, Humidity, Pressure and Gas Sensor
 """
 
-
 # Base RockSatSensor Class
 from sensors import RockSatSensor
 

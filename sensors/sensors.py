@@ -13,7 +13,11 @@ import busio
 
 # Import RockSat sensors
 from timems import TimeMS
+from mlx90640 import MLX90640
 from bme80 import BME680
+from bno055 import BNO055
+from vl53l0x import VL53L0X
+from lsm9ds1 import LSM9DS1
 
 # Template for a basic RockSat sensor
 #   Each sensor is going to need to return a dictionary containing the data returned by the sensor and an ordered array of the headers for the CSV file
@@ -50,6 +54,9 @@ def main(bootTime):
     # Desired sensors
     desiredSensors = [
         BME680,             # Temperature, Humidity, Pressure and Gas Sensor
+        BNO055,             # Absolute Orientation Sensor
+        VL53L0X,            # Time of Flight Distance Sensor
+        LSM9DS1,            # Accelerometer/Magnetometer/Gyroscope Sensor
     ]
 
     # Active sensors
@@ -71,10 +78,26 @@ def main(bootTime):
             logger.critical(f"Failed to initialize {Sensor.__name__} over I2C")
     logger.info("Finished initializing sensors")
 
+    # MLX90640 Thermal Camera (special)
+    mlx = None
+    try:
+        # Start the sensor
+        mlx = MLX90640(i2c)
+        logger.info("Initialized MLX90640 thermal camera")
+    except:
+        # Log failure
+        logger.critical("Failed to initialize MLX90640 thermal camera")
+
     # Create the data file
-    logger.info(f"Writing sensor data to file: ./data/sensors_{str(int(bootTime))}.log")
+    logger.info(f"Writing sensor data to file: ./data/sensors_{str(int(bootTime))}.csv")
     os.system("mkdir -p data")
-    dataFile = open(f"data/sensors_{str(int(bootTime))}.log", "a")
+    dataFile = open(f"data/sensors_{str(int(bootTime))}.csv", "a")
+
+    # Create the MLX thermal camera data file
+    mlxDataFile = None
+    if mlx != None:
+        logger.info(f"Writing MLX thermal camera frames to file: ./data/mlx_{str(int(bootTime))}.rstf") # rstf -> RockSat thermal frame
+        mlxDataFile = open(f"data/mlx_{str(int(bootTime))}.rstf", "a")
 
     # Configure the order of the columns in the CSV file
     sensorOrder = []
@@ -104,12 +127,18 @@ def main(bootTime):
                 if i != len(sensorOrder) - 1: csvLine += ","
             csvLine += "\n"
 
+            # Construct a line for the MLX thermal camera
+            mlxLine = f"{data['Time']} --> {mlx.poll().join(',')}" if mlx != None else None
+
             # Write the CSV line to the file
             dataFile.write(csvLine)
+            if mlx != None: mlxDataFile.write(mlxLine)
             # Force a flush to ensure that no data is being built up in the memory buffer that could be lost during power failure
             dataFile.flush()
+            if mlx != None: mlxDataFile.flush()
     # Capture SIGTERM
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")
+        if mlx != None: mlxDataFile.close()
         dataFile.close()
         return
