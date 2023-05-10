@@ -1,6 +1,6 @@
 # File_Structure_Linux
 
-'''
+"""
 File Structure (LINUX)
 Contrbutors: Gage Gunn
 
@@ -10,7 +10,6 @@ This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
 3. Allow data to be written to said files
-
 
 HOW TO USE
 1. Write fs = FileStructure() at top of file
@@ -31,8 +30,7 @@ To use Flight Log -
     1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", "", "Folders initialized")
     2. Add to flight log - fs.write_to_file("Flight_Log", None, "[statement]")
 
----------------------------------------------------------------------- '''
-
+"""
 
 
 ### Libraries ###
