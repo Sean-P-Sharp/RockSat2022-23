@@ -31,7 +31,7 @@ To use Flight Log -
     1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", "", "Folders initialized")
     2. Add to flight log - fs.write_to_file("Flight_Log", "", "[statement]")
 
-----------------------------------------------------------------------
+---------------------------------------------------------------------- '''
 
 
 
