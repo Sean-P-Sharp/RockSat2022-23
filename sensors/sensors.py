@@ -14,7 +14,7 @@ import busio
 # Import RockSat sensors
 from timems import TimeMS
 from mlx90640 import MLX90640
-from bme80 import BME680
+from bme680 import BME680
 from bno055 import BNO055
 from vl53l0x import VL53L0X
 from lsm9ds1 import LSM9DS1
@@ -128,7 +128,7 @@ def main(bootTime):
             csvLine += "\n"
 
             # Construct a line for the MLX thermal camera
-            mlxLine = f"{data['Time']} --> {mlx.poll().join(',')}" if mlx != None else None
+            mlxLine = f"{data['Time']} --> {mlx.poll()['MLX90640 Thermal Frame'].join(',')}" if mlx != None else None
 
             # Write the CSV line to the file
             dataFile.write(csvLine)

@@ -14,8 +14,8 @@ class MLX90640(RockSatSensor):
     def __init__(self, i2c):
         # Configure the sensor on the supplied i2c bus
         self.mlx90640 = adafruit_mlx90640.MLX90640(i2c)
-        # Set the refresh rate to 2Hz
-        mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_2_HZ
+        # Set the refresh rate
+        mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_1_HZ
         # Define the header
         self.header = [
             "MLX90640 Thermal Frame",
