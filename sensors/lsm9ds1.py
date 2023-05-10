@@ -13,7 +13,7 @@ import adafruit_lsm9ds1
 class LSM9DS1(RockSatSensor):
     def __init__(self, i2c):
         # Configure the sensor on the supplied i2c bus
-        self.lsm9ds1 = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
+        self.lsm9ds1 = adafruit_lsm9ds1.LSM9DS1_I2C(i2c, 0x1e)
         # Define the header
         self.header = [
             "LSM9DS1 Acceleration (x)",

@@ -26,7 +26,7 @@ def main(bootTime, logger):
     try:
         i2c = busio.I2C(board.SCL, board.SDA)
         logger.info("Started I2C interface for sensors")
-        print(i2c.scan())
+        # print(i2c.scan())
     except Exception as e:
         logger.critical("Failed to enable i2c interface, the sensor thread will now crash!")
         logger.critical(f"Exception: {e}")
