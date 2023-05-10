@@ -1,5 +1,5 @@
 # File_Structure
-
+ 
 '''
 File Structure
 Contrbutors: Gage Gunn
@@ -13,18 +13,6 @@ This file will
 
 -----------------------------------------------------------------------
 
-HOW TO USE
-1. Create Folders - fs.create_folders() 
-2. Create a new file - fs.write_to_folder("Folder", "Sub Folder (if none just leave as '')", [value])
-3. Write to the most recently created file - 
-    folder_path = os.path.join(Main File Path, "Folder", "Subfolder") << If no subfolder, remove the last part
-    file_path = highest_id_path[folder_path]
-    with open(file_path, 'a') as file:
-        file.write("\nAdditional data")
-
-*Notes*
-1. Make sure to assign correct file path to create folders to
-'''
 
 
 

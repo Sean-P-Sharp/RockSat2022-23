@@ -1,38 +1,50 @@
 """
 File Structure Test
-This file is for testing the ability to access the 'File_Structure' file for use for the 22-23 RockSat-X Program along with giving examples on how it is used
+This file is for testing the ability to access the 'File_Structure' file for use for the 
+22-23 RockSat-X Program along with giving examples on how it is used.
 """
+
+'''
+HOW TO USE
+1. Write fs = FileStructure() at top of file
+
+To create folders -- fs.create_folders()
+    -Example: fs.create_folders()
+    - Will create all folders specified within the __init__
+    
+To create a file -- fs.write_to_folder("[folder name]", "[subfolder name {write "" if none}]", "[initialization statement]")
+    - Example: fs.write_to_folder("BME680", "Temperature", "Temperature file created on {time}")
+    - Will create a csv file in designated folder
+    
+To write to a already created file -- fs.write_to_file("[folder name]", "[subfolder name {write "" if none}]", "[data]")
+    - Example: fs.write_to_folder("BME680", "Temperature", "123.45")
+    - Will write to the most recently created file in a specific folder and subfolder
+    
+To use Flight Log - 
+    1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", "", "Folders initialized")
+    2. Add to flight log - fs.write_to_file("Flight_Log", "", "[statement]")
+'''
+    
+
 
 ### Librares ###
 import os
-from FS_proto import FileStructure #<< This is our class for FileStructure
+from File_Structure_Windows import FileStructure
 
 
 ### Variables ###
 fs = FileStructure()
 
 
-
-# Create the folders
+# Create the folders & flight log
 fs.create_folders()
-fs.write_to_folder('Flight_Log', '', 'Folders have been created')
 
-# Creating files and writing the FIRST LINE of data
-test_number = str(20)
-test_flog = 'Testing'
-fs.write_to_folder("BME680", "Temperature", test_number) #Write to a subfolder
-fs.write_to_folder('MLX90640', '', test_number) #Write to a folder
+# Creating files and writing the first line of data
+fs.write_to_folder("Flight_Log", "", "Checked Folders")
+fs.write_to_folder("BME680", "Temperature", 'This is a test value') #Write to a subfolder
+fs.write_to_folder('MLX90640', '', 'This is a test value') #Write to a folder
 
-#Writing to the file with the highest ID in a given folder manually
-# folder_path = os.path.join(fs.data_path, "Flight_Log")
-# file_path = fs.highest_id_path[folder_path]
-# with open(file_path, 'a') as file:
-#     file.write("\nAdditional data")
-
-#Writing to the file with the highest id in a given folder using a method
-# folder_name = 'BME680'
-# subfolder_name = 'Temperature'
-# data = '123456'
-# fs.write_to_file(folder_name, subfolder_name, data)
-
-# fs.write_to_file('MLX90640', '', '123456')
+#Write to a file
+fs.write_to_file("Flight_Log", None, "Data collection beginning...")
+fs.write_to_file("BME680", "Temperature", "75.7")
+fs.write_to_file("MLX90640", None, "38.2")

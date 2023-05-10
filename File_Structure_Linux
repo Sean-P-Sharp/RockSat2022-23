@@ -1,7 +1,7 @@
-# File_Structure
+# File_Structure_Linux
 
-'''
-File Structure
+"""
+File Structure (LINUX)
 Contrbutors: Gage Gunn
 
 RRCC/ACC Rocksat-X 2023
@@ -11,14 +11,33 @@ This file will
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
 3. Allow data to be written to said files
 
-----------------------------------------------------------------------
-'''
+HOW TO USE
+1. Write fs = FileStructure() at top of file
+
+To create folders -- fs.create_folders()
+    -Example: fs.create_folders()
+    - Will create all folders specified within the __init__
+    
+To create a file -- fs.write_to_folder("[folder name]", "[subfolder name {write "" if none}]", "[initialization statement]")
+    - Example: fs.write_to_folder("BME680", "Temperature", "Temperature file created on {time}")
+    - Will create a csv file in designated folder
+    
+To write to a already created file -- fs.write_to_file("[folder name]", "[subfolder name {write "" if none}]", "[data]")
+    - Example: fs.write_to_folder("BME680", "Temperature", "123.45")
+    - Will write to the most recently created file in a specific folder and subfolder
+    
+To use Flight Log - 
+    1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", "", "Folders initialized")
+    2. Add to flight log - fs.write_to_file("Flight_Log", None, "[statement]")
+
+"""
 
 
 ### Libraries ###
 import os
 from datetime import datetime
 import csv
+import time
 
 class FileStructure:
     
@@ -26,7 +45,7 @@ class FileStructure:
     highest_id_path = {}
 
     def __init__(self):
-        self.data_path = "/home/--/Data"
+        self.data_path = "/home/Pi/Desktop/Data"
         self.folders = ["BME680", "DOF", "MLX90640", "Flight_Log", "VL53L1X", "BNO055"]
         self.subfolders = {
             "BME680": ["Humidity", "Pressure", "Temperature"],
@@ -37,13 +56,16 @@ class FileStructure:
         self.current_time = datetime.now().strftime("%m-%d-%Y_%Hhr-%Mmin-%Ssec")
         self.stop_char = ' '
 
+        self.highest_id = 0
+        self.highest_id_path = {}
+
     def create_folders(self):
         try:
             os.makedirs(self.data_path)
         except FileExistsError:
             print('Data folder already exist')
             pass
-        
+
         for folder in self.folders:
             path = os.path.join(self.data_path, folder)
             try:
@@ -82,11 +104,11 @@ class FileStructure:
         find_highest_id(fs.data_path)
 
     def write_to_file(self, folder_name, subfolder_name, data):
-        if subfolder_name == '': #Check if there is no subfolder
+        if subfolder_name == None: #Check if there is no subfolder
             folder_path = os.path.join(fs.data_path, folder_name)
         else:
             folder_path = os.path.join(fs.data_path, folder_name, subfolder_name)
-            
+        
         find_highest_id(fs.data_path)
         file_path = fs.highest_id_path.get(folder_path)
         if file_path is None:
@@ -95,7 +117,7 @@ class FileStructure:
 
         with open(file_path, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([data])
+            writer.writerow([time.time()*1000] + [data])
 
 
 ### Functions ###
@@ -110,9 +132,15 @@ def find_highest_id(path):
             if id.isdigit():
                 if fs.ID > fs.highest_id:
                     fs.highest_id_path[path] = item_path
-                    fs.highest_id = int(id)
-                    fs.highest_id_path[path] = item_path
+                    # fs.highest_id = int(id)
+                    # fs.highest_id_path[path] = item_path
 
 
 ### Variables ###
 fs = FileStructure()
+
+
+
+
+# Create folder on write instead of 
+# int(time.time()*1000) write time stamp to beginning of each line of data
