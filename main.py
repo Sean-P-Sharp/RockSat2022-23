@@ -47,6 +47,9 @@
 
         --thermal
             Runs the thermal camera thread. This will run the thermal camera over I2C and output frames to a file in the ./data directory.
+
+        --aux-camera
+            Records using the auxiliary camera.
         
         --motor
             Throttles the motor and obeys the signals of the physical limit switches.
@@ -68,8 +71,11 @@
         This makes it easier to corroborate the data from the sensors with the respective log files. 
 
     Timer Events:
-        ...
-
+        GSE     T-30s             Payload powers on and all relevant threads are started. Begins camera recording and data collection.
+        TE-2    T+20s             Extend the 360-camera arm.
+        TE-3    T+30s             Retract the 360-camera arm.
+                TE-3+30s          Cycle GoPro recording to force file saving. Safe shutdown of payload control computer and other
+                                  electronic hardware.
 """
 
 # Import dependencies
@@ -84,10 +90,16 @@ import datetime
 
 # RPi GPIO
 import RPi.GPIO as GPIO
+import busio
+import board
+
+# MotorKit
+from adafruit_motorkit import MotorKit
 
 # Import RockSat experiment modules
 import sensors.sensors as sensors
 import sensors.thermal as thermal
+import persist
 
 # Main Method    str(datetime.datetime.now().strftime("%Y-%m-%d T%H:%M:%S"))
 def main(commandLineArguments):
@@ -119,10 +131,36 @@ def main(commandLineArguments):
     #   Finally, log the boot time of the payload    
     logger.info(f'CC of CO payload finished booting at {round(bootTime * 1000)} (UNIX millis)')
 
+    # Reset the persisting state if they have flagged to do so
+    if "--reset" in commandLineArguments:
+        logger.info("Cleared persisting state")
+        os.system("rm -f state")
+
+    # Load previous state
+    currentState = persist.read()
+    if currentState: logger.warning(f"Persisting state detected ({currentState}). Possible power failure has occurred.")
+    else: logger.info("No persisting state was detected, proceeding with normal execution order")
+
+    # Identify power failures
+    powerFailed = True if currentState != None else False
+
+    # Load configuration from config.ini
+    config = configparser.ConfigParser()
+    config.read('./config.ini')
+    
+    # Load pins from config
+    TE_2 = int(config['Timer Event']['TE_2'])                   # Spacecraft Battery Bus Timer Event (TE-2)
+    TE_3 = int(config['Timer Event']['TE_3'])                   # Spacecraft Battery Bus Timer Event (TE-3)
+    EXTEND_LIMIT = int(config['Limit Switch']['EXTENDED'])      # Arm Extension Limit Switch
+    RETRACT_LIMIT = int(config['Limit Switch']['RETRACTED'])    # Arm Retraction Limit Switch
+    INHIBIT_1 = int(config['Inhibitor']['ARM_INHIBIT'])         # Flight Arm Inhibit
+    # Notify
+    logger.info("Loaded configuration from 'config.ini'")
+
     # Initialize multiprocessing
-    multiprocessing.set_start_method('fork')
+    multiprocessing.set_start_method("fork")
     processQueue = multiprocessing.Queue()
-    logger.info('Initialized multiprocessing')
+    logger.info("Initialized multiprocessing")
     
     # Handle command line arguments
     #   If no arguments are given when the file is run from the command line, run all functions
@@ -140,14 +178,96 @@ def main(commandLineArguments):
 
     # Configure the GPIO pins
     GPIO.setmode(GPIO.BCM)
-    """GPIO.setup(ter, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(te1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(lse, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(te2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(lsr, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)"""
+    GPIO.setup(TE_2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(TE_3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(EXTEND_LIMIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(RETRACT_LIMIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(INHIBIT_1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    logger.info("Configured GPIO")
 
-    # Loop in place of timer event handling
-    time.sleep(600)
+    # Shorthand functions for conditions
+    def armExtended(): return GPIO.input(EXTEND_LIMIT) == 1
+    def armRetracted(): return GPIO.input(RETRACT_LIMIT) == 1
+    def inhibit(): return GPIO.input(INHIBIT_1) == 1
+    def TE(id):
+        if id == 2: return GPIO.input(TE_2) == 1
+        if id == 3: return GPIO.input(TE_3) == 1
+
+    # Configure MotorKit
+    motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
+    arm = kit.motor1
+    cam = kit.motor3
+
+    # Arm Extension & Retraction Methods
+    def extendArm():
+        try:
+            # If extend limit switch not hit, extend (positive throttle),
+            # Otherwise, return True to signify extension
+            if not armExtended():
+                arm.throttle = 1
+                time.sleep(1)
+                while arm.throttle == 1:
+                    # Once extend limit is hit, set throttle to 0 and return True to signify extension
+                    # If the arm does not finish extending by the time that TE-3 triggers, just stop moving it as now we have to retract
+                    if armExtended() or TE(3):
+                        arm.throttle = 0
+                        return True
+            else: return True
+        except: return False
+    def retractArm():
+        try:
+            # If extend limit switch not hit, retract (negative throttle),
+            # Otherwise, return True to signify retraction
+            if not armRetracted():
+                arm.throttle = -1
+                time.sleep(1)
+                while arm.throttle == -1:
+                    # Once retract limit is hit, set throttle to 0 and return True to signify retraction
+                    if armRetracted():
+                        arm.throttle = 0
+                        return True
+            else: return True
+        except: return False
+    
+    # Check if inhibitor pin set
+    inhibited = inhibit()
+    if inhibited: logger.warning("Testing inhibitor pin is active, arm motor will not move")
+
+    # Keep looping and take action based on the timer events.
+    operating = True
+    logger.info("Finished loading other functionality, now listening to timer events coming from the spacecraft battery bus")
+    TE3time = 0
+    while operating:
+        # If TE-2 pin fires
+        if TE(2) and (not currentState or currentState == "TE-2"):
+            logger.info("Battery bus timer event TE-2 triggered, extending arm...")
+            # Set current state
+            currentState = "TE-2"
+            if not inhibited: persist.set(currentState)
+            # Extend the arm
+            extendArm()
+            logger.info("Camera arm extended")
+            # Mark the system as ready for the next event
+            currentState = "TE-2_Done"
+            if not inhibited: persist.set(currentState)
+        # If TE-3 pin fires
+        if (TE(3) and currentState == "TE-2_Done") or currentState == "TE-3":
+            logger.info("Battery bus timer event TE-3 triggered, retracting arm...")
+            # Log the time that TE-3 fired
+            TE3time = time.time()
+            # Set current state
+            currentState = "TE-3"
+            if not inhibited: persist.set(currentState)
+            # Retract the arm
+            retractArm()    
+            logger.info("Camera arm retracted")
+            # Mark the system as ready for the next event
+            currentState = "TE-3_Done"
+            if not inhibited: persist.set(currentState)
+        # 30 seconds after TE-3, safe shutdown
+        if time.time() - TE3time > 30 and currentState == "TE-3_Done":
+            logger.info("It is now 30 seconds after TE-3, beginning safe shutdown in preparation for splashdown")
+            operating = False
 
     # Stop the thermal thread
     if thermalThread != None:
@@ -162,6 +282,14 @@ def main(commandLineArguments):
         sensorThread.join()
         sensorThread.close()
         logger.info("Finished stopping sensor thread")
+
+    # If inhibitor was set, clear persistence flag
+    if inhibited: persist.clear()
+
+    # If inhibitor was removed during operation, that means that we do not want to shutdown (eg. want a shell)
+    if inhibited and not inhibit():
+        logger.warning("Inhibitor pin disconnected during operation signalling the desire to keep the Pi on after this test run")
+        return True
     
     # Shutdown the pi
     if "--debug" not in commandLineArguments:

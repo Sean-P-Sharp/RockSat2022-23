@@ -14,6 +14,7 @@ echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 
 # *** Install pip3 dependencies
 pip3 install adafruit-blinka                    # Adafruit Circutpython, etc.
+pip3 install adafruit_motorkit                  # MotorKit
 pip3 install adafruit-circuitpython-bno055      # Absolute Orientation Sensor
 pip3 install adafruit-circuitpython-vl53l0x     # Time of Flight Distance/Ranging Sensor
 pip3 install adafruit-circuitpython-lsm9ds1     # Accelerometer/Magnetometer/Gyroscope Sensor
