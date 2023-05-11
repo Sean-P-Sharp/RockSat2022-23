@@ -168,7 +168,7 @@ def main(commandLineArguments):
     #   Sensors
     sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--sensors' in commandLineArguments or runAll:
-        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime, logger])
+        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime, logger, "--telemetry" in commandLineArguments or runAll])
         sensorThread.start()
     #   Thermal Camera
     thermalThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
@@ -240,27 +240,31 @@ def main(commandLineArguments):
     while operating:
         # If TE-2 pin fires
         if TE(2) and (not currentState or currentState == "TE-2"):
-            logger.info("Battery bus timer event TE-2 triggered, extending arm...")
+            logger.info("Battery bus timer event TE-2 triggered")
             # Set current state
             currentState = "TE-2"
             if not inhibited: persist.set(currentState)
             # Extend the arm
-            extendArm()
-            logger.info("Camera arm extended")
+            if "--motor" in commandLineArguments or runAll:
+                logger.info("Starting camera arm extension")
+                extendArm() 
+                logger.info("Camera arm extended")
             # Mark the system as ready for the next event
             currentState = "TE-2_Done"
             if not inhibited: persist.set(currentState)
         # If TE-3 pin fires
         if (TE(3) and currentState == "TE-2_Done") or currentState == "TE-3":
-            logger.info("Battery bus timer event TE-3 triggered, retracting arm...")
+            logger.info("Battery bus timer event TE-3 triggered")
             # Log the time that TE-3 fired
             TE3time = time.time()
             # Set current state
             currentState = "TE-3"
             if not inhibited: persist.set(currentState)
             # Retract the arm
-            retractArm()    
-            logger.info("Camera arm retracted")
+            if "--motor" in commandLineArguments or runAll:
+                logger.info("Starting camera arm retraction")
+                retractArm() 
+                logger.info("Camera arm retracted")
             # Mark the system as ready for the next event
             currentState = "TE-3_Done"
             if not inhibited: persist.set(currentState)
