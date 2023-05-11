@@ -4,6 +4,8 @@
 logs
 data
 state
+test_a.txt
+test_b.txt
 
 # * * * 
 # Python Gitignore (do not commit MacOS indexing files to verison control)

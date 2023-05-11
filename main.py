@@ -129,6 +129,7 @@ def main(commandLineArguments):
     #   Acquire the active logger
     logger = logging.getLogger(__name__)
     #   Finally, log the boot time of the payload    
+    logger.info(f"Launched from command: {' '.join(commandLineArguments)}")
     logger.info(f'CC of CO payload finished booting at {round(bootTime * 1000)} (UNIX millis)')
 
     # Reset the persisting state if they have flagged to do so
@@ -153,7 +154,10 @@ def main(commandLineArguments):
     TE_3 = int(config['Timer Event']['TE_3'])                   # Spacecraft Battery Bus Timer Event (TE-3)
     EXTEND_LIMIT = int(config['Limit Switch']['EXTENDED'])      # Arm Extension Limit Switch
     RETRACT_LIMIT = int(config['Limit Switch']['RETRACTED'])    # Arm Retraction Limit Switch
-    INHIBIT_1 = int(config['Inhibitor']['ARM_INHIBIT'])         # Flight Arm Inhibit
+    INHIBIT_1 = int(config['Inhibitor']['INHIBIT_1'])           # Flight Arm Inhibit
+    # Load timing config
+    POST_TE_3_DWELL_TIME_SECONDS = int(config["Timing"]["TE_3_SHUTDOWN_DWELL"])
+    if "--debug" in commandLineArguments: POST_TE_3_DWELL_TIME_SECONDS = 30
     # Notify
     logger.info("Loaded configuration from 'config.ini'")
 
@@ -195,8 +199,8 @@ def main(commandLineArguments):
 
     # Configure MotorKit
     motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
-    arm = kit.motor1
-    cam = kit.motor3
+    arm = motorKit.motor1
+    cam = motorKit.motor3
 
     # Arm Extension & Retraction Methods
     def extendArm():
@@ -245,13 +249,15 @@ def main(commandLineArguments):
             currentState = "TE-2"
             if not inhibited: persist.set(currentState)
             # Extend the arm
-            if "--motor" in commandLineArguments or runAll:
+            if ("--motor" in commandLineArguments and not inhibited) or runAll:
                 logger.info("Starting camera arm extension")
                 extendArm() 
                 logger.info("Camera arm extended")
             # Mark the system as ready for the next event
             currentState = "TE-2_Done"
             if not inhibited: persist.set(currentState)
+            # Notify complete
+            logger.info("TE-2 tasks completed")
         # If TE-3 pin fires
         if (TE(3) and currentState == "TE-2_Done") or currentState == "TE-3":
             logger.info("Battery bus timer event TE-3 triggered")
@@ -261,16 +267,18 @@ def main(commandLineArguments):
             currentState = "TE-3"
             if not inhibited: persist.set(currentState)
             # Retract the arm
-            if "--motor" in commandLineArguments or runAll:
+            if ("--motor" in commandLineArguments and not inhibited) or runAll:
                 logger.info("Starting camera arm retraction")
                 retractArm() 
                 logger.info("Camera arm retracted")
             # Mark the system as ready for the next event
             currentState = "TE-3_Done"
             if not inhibited: persist.set(currentState)
+            # Notify complete
+            logger.info("TE-3 tasks completed")
         # 30 seconds after TE-3, safe shutdown
-        if time.time() - TE3time > 30 and currentState == "TE-3_Done":
-            logger.info("It is now 30 seconds after TE-3, beginning safe shutdown in preparation for splashdown")
+        if time.time() - TE3time > POST_TE_3_DWELL_TIME_SECONDS and currentState == "TE-3_Done":
+            logger.info(f"It is now {str(POST_TE_3_DWELL_TIME_SECONDS)} seconds after TE-3, beginning safe shutdown in preparation for splashdown")
             operating = False
 
     # Stop the thermal thread
@@ -292,7 +300,10 @@ def main(commandLineArguments):
 
     # If inhibitor was removed during operation, that means that we do not want to shutdown (eg. want a shell)
     if inhibited and not inhibit():
-        logger.warning("Inhibitor pin disconnected during operation signalling the desire to keep the Pi on after this test run")
+        logger.warning("Inhibitor pin, which was originally connected, was disconnected during operation signalling the desire to keep the Pi on after this test run")
+        return True
+    elif not inhibited and inhibit():
+        logger.warning("Inhibitor pin, which was originally disconnected, was connected during operation signalling the desire to keep the Pi on after this test run")
         return True
     
     # Shutdown the pi

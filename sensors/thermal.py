@@ -37,6 +37,8 @@ def main(bootTime, logger):
     except Exception as e:
         # Log failure
         logger.critical(f"Failed to initialize MLX90640 thermal camera. Exception: {e}")
+        logger.critical("MLX90640 thermal thread will now crash")
+        return
 
     # Create the MLX thermal camera data file
     logger.info(f"Writing MLX thermal camera frames to file: ./data/mlx_{str(int(bootTime))}.rstf") # rstf -> RockSat thermal frame

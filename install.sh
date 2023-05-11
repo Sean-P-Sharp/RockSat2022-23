@@ -6,15 +6,27 @@
 # Nofity user instructions
 echo "Please make sure that you are running this script as the root user, eg. 'sudo install.sh'"
 
+# Update the system
+apt update
+apt install -y python3 python3-pip i2c-tools
+
 # Enable root login over ssh
-echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+echo "Do you need to enable root login over SSH? "
+while true; do
+    read -p "$* [y/n]: " yn
+    case $yn in
+        [Yy]*) echo "PermitRootLogin yes" >> /etc/ssh/sshd_config ; systemctl restart ssh.service ; break ;; 
+        [Nn]*) break ;;
+    esac
+done
 
 # Disable sudo password (so that the payload can shut itself down)
 # echo "pi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # *** Install pip3 dependencies
+pip3 install pyserial                           # Serial communication
 pip3 install adafruit-blinka                    # Adafruit Circutpython, etc.
-pip3 install adafruit_motorkit                  # MotorKit
+pip3 install adafruit-circuitpython-motorkit    # MotorKit
 pip3 install adafruit-circuitpython-bno055      # Absolute Orientation Sensor
 pip3 install adafruit-circuitpython-vl53l0x     # Time of Flight Distance/Ranging Sensor
 pip3 install adafruit-circuitpython-lsm9ds1     # Accelerometer/Magnetometer/Gyroscope Sensor

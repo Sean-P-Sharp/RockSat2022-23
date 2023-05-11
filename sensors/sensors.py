@@ -18,7 +18,7 @@ from sensors.vl53l0x import VL53L0X
 from sensors.lsm9ds1 import LSM9DS1
 
 # Main sensor thread
-def main(bootTime, logger):
+def main(bootTime, logger, telemetryEnabled):
     # Log from this new thread
     logger.info("Started sensor thread")
 
@@ -27,7 +27,7 @@ def main(bootTime, logger):
     try:
         i2c = busio.I2C(board.SCL, board.SDA)
         logger.info("Started I2C interface for sensors")
-        # print(i2c.scan())
+        logger.info(f"Found I2C devices at addresses: {', '.join([hex(x) for x in i2c.scan()])}")
     except Exception as e:
         logger.critical("Failed to enable i2c interface, the sensor thread will now crash!")
         logger.critical(f"Exception: {e}")
@@ -73,6 +73,25 @@ def main(bootTime, logger):
     # Write the header line to the CSV file as the first line
     dataFile.write(",".join(sensorOrder) + "\n")
 
+    # Configure serial
+    ser = None
+    if telemetryEnabled:
+        try:
+            # Configure serial port
+            ser = serial.Serial(
+                port="/dev/ttyS0",
+                baudrate=19200,
+                timeout=1
+            )
+            logger.info("Enabled RS232 interface for telemetry")
+
+            # Test string
+            ser.write(b'Hello Wallops!')
+            logger.info("Sent telemetry test message over RS232 telemetry interface")
+        except:
+            logger.critical("Failed to enable serial port for telemetry")
+            telemetryEnabled = False
+
     # Try/Except block to catch KeyboardInterrupt eg. SIGTERM
     try:
         # Keep polling sensors forever
@@ -106,4 +125,5 @@ def main(bootTime, logger):
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")
         dataFile.close()
+        if telemetryEnabled: ser.close()
         return
