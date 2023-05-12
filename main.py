@@ -100,6 +100,7 @@ from adafruit_motorkit import MotorKit
 import sensors.sensors as sensors
 import sensors.thermal as thermal
 import persist
+from telemetry import Telemetry
 
 # Main Method    str(datetime.datetime.now().strftime("%Y-%m-%d T%H:%M:%S"))
 def main(commandLineArguments):
@@ -155,6 +156,7 @@ def main(commandLineArguments):
     EXTEND_LIMIT = int(config['Limit Switch']['EXTENDED'])      # Arm Extension Limit Switch
     RETRACT_LIMIT = int(config['Limit Switch']['RETRACTED'])    # Arm Retraction Limit Switch
     INHIBIT_1 = int(config['Inhibitor']['INHIBIT_1'])           # Flight Arm Inhibit
+    CAMERA = int(config['Camera Control']['CAMERA'])            # Camera Control
     # Load timing config
     POST_TE_3_DWELL_TIME_SECONDS = int(config["Timing"]["TE_3_SHUTDOWN_DWELL"])
     if "--debug" in commandLineArguments: POST_TE_3_DWELL_TIME_SECONDS = 30
@@ -165,19 +167,23 @@ def main(commandLineArguments):
     multiprocessing.set_start_method("fork")
     processQueue = multiprocessing.Queue()
     logger.info("Initialized multiprocessing")
-    
+
     # Handle command line arguments
     #   If no arguments are given when the file is run from the command line, run all functions
     runAll = len(commandLineArguments) == 1
+    #   Telemetry
+    telemetry = None
+    if "--telemetry" in commandLineArguments or runAll:
+        telemetry = Telemetry()
     #   Sensors
     sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--sensors' in commandLineArguments or runAll:
-        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime, logger, "--telemetry" in commandLineArguments or runAll])
+        sensorThread = multiprocessing.Process(target=sensors.main, args=[bootTime, telemetry])
         sensorThread.start()
     #   Thermal Camera
     thermalThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--thermal' in commandLineArguments or runAll:
-        thermalThread = multiprocessing.Process(target=thermal.main, args=[bootTime, logger])
+        thermalThread = multiprocessing.Process(target=thermal.main, args=[bootTime, telemetry])
         thermalThread.start()
 
     # Configure the GPIO pins
@@ -187,6 +193,7 @@ def main(commandLineArguments):
     GPIO.setup(EXTEND_LIMIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(RETRACT_LIMIT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(INHIBIT_1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(CAMERA, GPIO.OUT)
     logger.info("Configured GPIO")
 
     # Shorthand functions for conditions
@@ -200,7 +207,6 @@ def main(commandLineArguments):
     # Configure MotorKit
     motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
     arm = motorKit.motor1
-    cam = motorKit.motor3
 
     # Arm Extension & Retraction Methods
     def extendArm():
@@ -215,6 +221,7 @@ def main(commandLineArguments):
                     # If the arm does not finish extending by the time that TE-3 triggers, just stop moving it as now we have to retract
                     if armExtended() or TE(3):
                         arm.throttle = 0
+                        if telemetry: telemetry.transmit("Extension limit switch hit")
                         return True
             else: return True
         except: return False
@@ -229,13 +236,26 @@ def main(commandLineArguments):
                     # Once retract limit is hit, set throttle to 0 and return True to signify retraction
                     if armRetracted():
                         arm.throttle = 0
+                        if telemetry: telemetry.transmit("Retraction limit switch hit")
                         return True
             else: return True
         except: return False
+
+    # Camera Control
+    def toggleRecord():
+        GPIO.output(CAMERA, GPIO.HIGH)
+        time.sleep(1.25)
+        GPIO.output(CAMERA, GPIO.LOW)
     
     # Check if inhibitor pin set
     inhibited = inhibit()
     if inhibited: logger.warning("Testing inhibitor pin is active, arm motor will not move")
+
+    # If camera is in scope of operation, toggle recording on
+    if "--camera" in commandLineArguments or runAll:
+        toggleRecord()
+        logger.info("Toggled main camera recording on")
+        if telemetry: telemetry.transmit("Camera Toggle Record On")
 
     # Keep looping and take action based on the timer events.
     operating = True
@@ -244,6 +264,7 @@ def main(commandLineArguments):
     while operating:
         # If TE-2 pin fires
         if TE(2) and (not currentState or currentState == "TE-2"):
+            if telemetry: telemetry.transmit("TE-2 Triggered")
             logger.info("Battery bus timer event TE-2 triggered")
             # Set current state
             currentState = "TE-2"
@@ -253,6 +274,7 @@ def main(commandLineArguments):
                 logger.info("Starting camera arm extension")
                 extendArm() 
                 logger.info("Camera arm extended")
+                if telemetry: telemetry.transmit("Extension limit switch hit")
             # Mark the system as ready for the next event
             currentState = "TE-2_Done"
             if not inhibited: persist.set(currentState)
@@ -260,6 +282,7 @@ def main(commandLineArguments):
             logger.info("TE-2 tasks completed")
         # If TE-3 pin fires
         if (TE(3) and currentState == "TE-2_Done") or currentState == "TE-3":
+            if telemetry: telemetry.transmit("TE-3 Triggered")
             logger.info("Battery bus timer event TE-3 triggered")
             # Log the time that TE-3 fired
             TE3time = time.time()
@@ -278,6 +301,7 @@ def main(commandLineArguments):
             logger.info("TE-3 tasks completed")
         # 30 seconds after TE-3, safe shutdown
         if time.time() - TE3time > POST_TE_3_DWELL_TIME_SECONDS and currentState == "TE-3_Done":
+            if telemetry: telemetry.transmit(f"Post TE-3 dwell complete")
             logger.info(f"It is now {str(POST_TE_3_DWELL_TIME_SECONDS)} seconds after TE-3, beginning safe shutdown in preparation for splashdown")
             operating = False
 
@@ -287,6 +311,7 @@ def main(commandLineArguments):
         thermalThread.join()
         thermalThread.close()
         logger.info("Finished stopping thermal camera thread")
+        if telemetry: telemetry.transmit("Stopped sensors")
 
     # Stop the sensor thread
     if sensorThread != None:
@@ -294,6 +319,13 @@ def main(commandLineArguments):
         sensorThread.join()
         sensorThread.close()
         logger.info("Finished stopping sensor thread")
+        if telemetry: telemetry.transmit("Stopped thermal camera")
+    
+    # If camera is in scope of operation, toggle recording on
+    if "--camera" in commandLineArguments or runAll:
+        toggleRecord()
+        logger.info("Toggled main camera recording off")
+        if telemetry: telemetry.transmit("Camera Toggle Record Off")
 
     # If inhibitor was set, clear persistence flag
     if inhibited: persist.clear()

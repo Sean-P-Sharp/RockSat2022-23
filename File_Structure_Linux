@@ -117,7 +117,7 @@ class FileStructure:
 
         with open(file_path, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([time.time()*1000] + [data])
+            writer.writerow([int(time.time()*1000)] + [data])
 
 
 ### Functions ###

@@ -6,6 +6,7 @@
 # Import dependencies
 import os
 import time
+import logging
 
 # Adafruit circutpython
 import board
@@ -15,7 +16,9 @@ import busio
 from sensors.mlx90640 import MLX90640
 
 # Thermal camera control thread
-def main(bootTime, logger):
+def main(bootTime, telemetry):
+    # Acquire existing logger
+    logger = logging.getLogger(__name__)
     # Log from this new thread
     logger.info("Started thermal camera thread")
 

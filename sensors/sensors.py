@@ -5,6 +5,7 @@
 # Import dependencies
 import os
 import time
+import logging
 
 # Adafruit circutpython
 import board
@@ -18,7 +19,10 @@ from sensors.vl53l0x import VL53L0X
 from sensors.lsm9ds1 import LSM9DS1
 
 # Main sensor thread
-def main(bootTime, logger, telemetryEnabled):
+def main(bootTime, telemetry):
+    # Acquire the existing logger
+    logger = logging.getLogger(__name__)
+
     # Log from this new thread
     logger.info("Started sensor thread")
 
@@ -73,25 +77,6 @@ def main(bootTime, logger, telemetryEnabled):
     # Write the header line to the CSV file as the first line
     dataFile.write(",".join(sensorOrder) + "\n")
 
-    # Configure serial
-    ser = None
-    if telemetryEnabled:
-        try:
-            # Configure serial port
-            ser = serial.Serial(
-                port="/dev/ttyS0",
-                baudrate=19200,
-                timeout=1
-            )
-            logger.info("Enabled RS232 interface for telemetry")
-
-            # Test string
-            ser.write(b'Hello Wallops!')
-            logger.info("Sent telemetry test message over RS232 telemetry interface")
-        except:
-            logger.critical("Failed to enable serial port for telemetry")
-            telemetryEnabled = False
-
     # Try/Except block to catch KeyboardInterrupt eg. SIGTERM
     try:
         # Keep polling sensors forever
@@ -125,5 +110,4 @@ def main(bootTime, logger, telemetryEnabled):
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")
         dataFile.close()
-        if telemetryEnabled: ser.close()
         return
