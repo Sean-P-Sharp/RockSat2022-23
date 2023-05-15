@@ -210,6 +210,7 @@ def main(commandLineArguments):
     # Configure MotorKit
     motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
     arm = motorKit.motor1
+    arm.throttle = 0 # Reset motor
 
     # Arm Extension & Retraction Methods
     def extendArm():
@@ -225,6 +226,7 @@ def main(commandLineArguments):
                     if armExtended() or TE(3):
                         arm.throttle = 0
                         if telemetry: telemetry.transmit("Extension limit switch hit")
+                        logger.info("Extension limit switch hit")
                         return True
             else: return True
         except: return False
@@ -240,6 +242,7 @@ def main(commandLineArguments):
                     if armRetracted():
                         arm.throttle = 0
                         if telemetry: telemetry.transmit("Retraction limit switch hit")
+                        logger.info("Retraction limit switch hit")
                         return True
             else: return True
         except: return False
@@ -259,7 +262,7 @@ def main(commandLineArguments):
         currentState = persist.read()
 
     # If camera is in scope of operation, toggle recording on
-    if ("--camera" in commandLineArguments or runAll) and not powerFailed:
+    if ("--camera" in commandLineArguments or runAll) and not powerFailed and not inhibited:
         toggleRecord()
         logger.info("Toggled main camera recording on")
         if telemetry: telemetry.transmit("Camera Toggle Record On")
@@ -267,6 +270,7 @@ def main(commandLineArguments):
     # Keep looping and take action based on the timer events.
     operating = True
     logger.info("Finished loading other functionality, now listening to timer events coming from the spacecraft battery bus")
+    if telemetry: telemetry.transmit("Listening for timer events")
     TE3time = 0
     while operating:
         # If TE-2 pin fires
@@ -281,7 +285,6 @@ def main(commandLineArguments):
                 logger.info("Starting camera arm extension")
                 extendArm() 
                 logger.info("Camera arm extended")
-                if telemetry: telemetry.transmit("Extension limit switch hit")
             # Mark the system as ready for the next event
             currentState = "TE-2_Done"
             if not inhibited: persist.set(currentState)
@@ -329,14 +332,24 @@ def main(commandLineArguments):
         if telemetry: telemetry.transmit("Stopped thermal camera")
     
     # If camera is in scope of operation, toggle recording on
-    if "--camera" in commandLineArguments or runAll:
+    if ("--camera" in commandLineArguments or runAll) and not inhibited:
         toggleRecord()
         logger.info("Toggled main camera recording off")
         if telemetry: telemetry.transmit("Camera Toggle Record Off")
 
+    # If camera is in scope of operation, toggle recording on   and "--debug" not in commandLineArguments
+    if ("--camera" in commandLineArguments or runAll) and not inhibited:
+        time.sleep(10)
+        toggleRecord()
+        logger.info("Toggled main camera recording on for reentry")
+        if telemetry: telemetry.transmit("Camera Toggle Record On (reentry)")
+
     # Clear persistence flag regardless of inhibitor state (if we have reached splashdown, just take it from the top)
     #   The reason for this is that the camera has stopped recording and it is already to start clean
     persist.clear()
+
+    # Reset the motor one last time in case it breaks out of the main loop
+    arm.throttle = 0
 
     # If inhibitor was changed during operation, that means that we do not want to shutdown (eg. want a shell)
     if inhibited and not inhibit():

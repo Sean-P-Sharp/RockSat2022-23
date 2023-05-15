@@ -53,10 +53,12 @@ def main(bootTime, telemetry):
         # Keep polling the thermal camera forever
         while True:
             # Construct a line for the MLX thermal camera
-            mlxLine = f"{str(time.time() * 1000)} --> {','.join([str(x) for x in mlx.poll()['MLX90640 Thermal Frame']])}\n" if mlx != None else None
-
-            # Write & flush
-            mlxDataFile.write(mlxLine)
+            try:
+                mlxLine = f"{str(time.time() * 1000)} --> {','.join([str(x) for x in mlx.poll()['MLX90640 Thermal Frame']])}\n" if mlx != None else None
+                # Write & flush
+                mlxDataFile.write(mlxLine)
+            except Exception as e:
+                logger.critical(f"Failed to get next MLX thermal frame at {str(time.time() * 1000)}. Exception: {str(e)}")
             mlxDataFile.flush()
     # Capture SIGTERM
     except KeyboardInterrupt:

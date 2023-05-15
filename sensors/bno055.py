@@ -16,7 +16,7 @@ class BNO055(RockSatSensor):
         self.bno055 = adafruit_bno055.BNO055_I2C(i2c, 0x28)
         # Define the header
         self.header = [
-            "BNO055 Temperature",
+            # "BNO055 Temperature",
             "BNO055 Acceleration (x)",
             "BNO055 Acceleration (y)",
             "BNO055 Acceleration (z)",
@@ -56,7 +56,7 @@ class BNO055(RockSatSensor):
         gravity_x, gravity_y, gravity_z = self.bno055.linear_acceleration
         # Construct return object
         return {
-            "BNO055 Temperature": temperature,
+            # "BNO055 Temperature": temperature,
             "BNO055 Acceleration (x)": accel_x,
             "BNO055 Acceleration (y)": accel_y,
             "BNO055 Acceleration (z)": accel_z,
