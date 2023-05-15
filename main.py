@@ -145,6 +145,8 @@ def main(commandLineArguments):
 
     # Identify power failures
     powerFailed = True if currentState != None else False
+    if powerFailed:
+        logger.warning("Possible power failure detected: persisting state implies shutdown before splashdown conditions")
 
     # Load configuration from config.ini
     config = configparser.ConfigParser()
