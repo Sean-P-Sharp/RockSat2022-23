@@ -13,7 +13,7 @@ import busio
 
 # Import RockSat sensors
 from sensors.timems import TimeMS
-from sensors.bme680 import BME680
+from sensors.bme680 import BME680_Inside, BME680_Outside
 from sensors.bno055 import BNO055
 from sensors.vl53l0x import VL53L0X
 from sensors.lsm9ds1 import LSM9DS1
@@ -39,7 +39,8 @@ def main(bootTime, telemetry):
 
     # Desired sensors
     desiredSensors = [
-        BME680,             # Temperature, Humidity, Pressure and Gas Sensor
+        BME680_Inside,      # Temperature, Humidity, Pressure and Gas Sensor (inside e-box)
+        BME680_Outside,     # Temperature, Humidity, Pressure and Gas Sensor (outside e-box)
         BNO055,             # Absolute Orientation Sensor
         VL53L0X,            # Time of Flight Distance Sensor
         LSM9DS1,            # Accelerometer/Magnetometer/Gyroscope Sensor

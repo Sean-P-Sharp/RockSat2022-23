@@ -249,10 +249,14 @@ def main(commandLineArguments):
     
     # Check if inhibitor pin set
     inhibited = inhibit()
-    if inhibited: logger.warning("Testing inhibitor pin is active, arm motor will not move")
+    if inhibited:
+        logger.warning("Testing inhibitor pin is active, arm motor will not move")
+        logger.warning("Testing inhibitor pin is active, persisting state cleared")
+        persist.clear()
+        currentState = persist.read()
 
     # If camera is in scope of operation, toggle recording on
-    if "--camera" in commandLineArguments or runAll:
+    if ("--camera" in commandLineArguments or runAll) and not powerFailed:
         toggleRecord()
         logger.info("Toggled main camera recording on")
         if telemetry: telemetry.transmit("Camera Toggle Record On")
@@ -327,10 +331,11 @@ def main(commandLineArguments):
         logger.info("Toggled main camera recording off")
         if telemetry: telemetry.transmit("Camera Toggle Record Off")
 
-    # If inhibitor was set, clear persistence flag
-    if inhibited: persist.clear()
+    # Clear persistence flag regardless of inhibitor state (if we have reached splashdown, just take it from the top)
+    #   The reason for this is that the camera has stopped recording and it is already to start clean
+    persist.clear()
 
-    # If inhibitor was removed during operation, that means that we do not want to shutdown (eg. want a shell)
+    # If inhibitor was changed during operation, that means that we do not want to shutdown (eg. want a shell)
     if inhibited and not inhibit():
         logger.warning("Inhibitor pin, which was originally connected, was disconnected during operation signalling the desire to keep the Pi on after this test run")
         return True
