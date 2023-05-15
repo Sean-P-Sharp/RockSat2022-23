@@ -121,7 +121,7 @@ def main(commandLineArguments):
     #   By default, log at the debug level using the file handler that was created
     logging.basicConfig(
         level=logging.DEBUG,
-        format="[%(asctime)s.%(msecs)03d][%(module)7s][%(levelname)8s]\t%(message)s",
+        format="[%(asctime)s.%(msecs)03d][%(module)-9s][%(levelname)-8s]\t%(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[rotatingFileHandler]
     )
