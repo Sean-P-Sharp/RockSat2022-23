@@ -338,8 +338,8 @@ def main(commandLineArguments):
         if telemetry: telemetry.transmit("Camera Toggle Record Off")
 
     # If camera is in scope of operation, toggle recording on   and "--debug" not in commandLineArguments
-    if ("--camera" in commandLineArguments or runAll) and not inhibited:
-        time.sleep(10)
+    if (("--camera" in commandLineArguments and "--debug" not in commandLineArguments) or runAll) and not inhibited:
+        time.sleep(4)
         toggleRecord()
         logger.info("Toggled main camera recording on for reentry")
         if telemetry: telemetry.transmit("Camera Toggle Record On (reentry)")
