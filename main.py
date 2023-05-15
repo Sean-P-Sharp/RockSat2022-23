@@ -177,6 +177,7 @@ def main(commandLineArguments):
     telemetry = None
     if "--telemetry" in commandLineArguments or runAll:
         telemetry = Telemetry()
+        telemetry.transmit("Hello Wallops")
     #   Sensors
     sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--sensors' in commandLineArguments or runAll:
@@ -276,7 +277,7 @@ def main(commandLineArguments):
             currentState = "TE-2"
             if not inhibited: persist.set(currentState)
             # Extend the arm
-            if ("--motor" in commandLineArguments and not inhibited) or runAll:
+            if ("--motor" in commandLineArguments or runAll) and not inhibited:
                 logger.info("Starting camera arm extension")
                 extendArm() 
                 logger.info("Camera arm extended")
@@ -296,7 +297,7 @@ def main(commandLineArguments):
             currentState = "TE-3"
             if not inhibited: persist.set(currentState)
             # Retract the arm
-            if ("--motor" in commandLineArguments and not inhibited) or runAll:
+            if ("--motor" in commandLineArguments or runAll) and not inhibited:
                 logger.info("Starting camera arm retraction")
                 retractArm() 
                 logger.info("Camera arm retracted")

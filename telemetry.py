@@ -17,7 +17,7 @@ class Telemetry:
         try:
             self.ser = serial.Serial(
                 port="/dev/ttyS0",
-                baudrate=19200,
+                baudrate=9600,
                 timeout=1
             )
             self.logger.info("Opened RS232 interface for telemetry")
@@ -34,9 +34,9 @@ class Telemetry:
         
         # Attempt send/write to serial
         try:
-            self.ser.write(message)
-        except:
-            self.logger.critical(f"Failed to send message {message} at {str(int(time.time() * 1000))}")
+            self.ser.write(bytes(message, "utf-8"))
+        except Exception as e:
+            self.logger.critical(f"Failed to send message {message} at {str(int(time.time() * 1000))}\nException: {str(e)}")
     
     def end(self, message):
         # Do not close if failed to open

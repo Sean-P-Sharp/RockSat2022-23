@@ -79,6 +79,7 @@ def main(bootTime, telemetry):
     dataFile.write(",".join(sensorOrder) + "\n")
 
     # Try/Except block to catch KeyboardInterrupt eg. SIGTERM
+    telemetryTimeLastSent = 0
     try:
         # Keep polling sensors forever
         while True:
@@ -107,6 +108,18 @@ def main(bootTime, telemetry):
             dataFile.write(csvLine)
             # Force a flush to ensure that no data is being built up in the memory buffer that could be lost during power failure
             dataFile.flush()
+
+            # Write to telemetry
+            if (time.time() - telemetryTimeLastSent > 1) and telemetry != None:
+                package = []
+                if "BME680 0x76 Temperature" in data: package.append(f"T_i:{str(data['BME680 0x76 Temperature'])}")
+                if "BME680 0x77 Temperature" in data: package.append(f"T_e:{str(data['BME680 0x77 Temperature'])}")
+                if "VL54L0X Distance" in data: package.append(f"d:{str(data['VL54L0X Distance'])}")
+                if "BNO055 Acceleration (x)" in data: package.append(f"a_x:{str(data['BNO055 Acceleration (x)'])}")
+                if "BNO055 Acceleration (y)" in data: package.append(f"a_y:{str(data['BNO055 Acceleration (y)'])}")
+                if "BNO055 Acceleration (z)" in data: package.append(f"a_z:{str(data['BNO055 Acceleration (z)'])}")
+                telemetry.transmit(",".join(package))
+                telemetryTimeLastSent = time.time()
     # Capture SIGTERM
     except KeyboardInterrupt:
         logger.warning("Received SIGTERM, writing final data to file and terminating sensor thread")

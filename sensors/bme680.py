@@ -17,11 +17,11 @@ class BME680(RockSatSensor):
         self.bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, addr)
         # Define the header
         self.header = [
-            f"BME680 0x{hex(self.addr)} Temperature",
-            f"BME680 0x{hex(self.addr)} Gas",
-            f"BME680 0x{hex(self.addr)} Relative Humidity",
-            f"BME680 0x{hex(self.addr)} Pressure",
-            f"BME680 0x{hex(self.addr)} Altitude",
+            f"BME680 {hex(self.addr)} Temperature",
+            f"BME680 {hex(self.addr)} Gas",
+            f"BME680 {hex(self.addr)} Relative Humidity",
+            f"BME680 {hex(self.addr)} Pressure",
+            f"BME680 {hex(self.addr)} Altitude",
         ]
 
     def getHeader(self):
@@ -29,11 +29,11 @@ class BME680(RockSatSensor):
     
     def poll(self):
         return {
-            f"BME680 0x{hex(self.addr)} Temperature": self.bme680.temperature,
-            f"BME680 0x{hex(self.addr)} Gas": self.bme680.gas,
-            f"BME680 0x{hex(self.addr)} Relative Humidity": self.bme680.relative_humidity,
-            f"BME680 0x{hex(self.addr)} Pressure": self.bme680.pressure,
-            f"BME680 0x{hex(self.addr)} Altitude": self.bme680.altitude,
+            f"BME680 {hex(self.addr)} Temperature": self.bme680.temperature,
+            f"BME680 {hex(self.addr)} Gas": self.bme680.gas,
+            f"BME680 {hex(self.addr)} Relative Humidity": self.bme680.relative_humidity,
+            f"BME680 {hex(self.addr)} Pressure": self.bme680.pressure,
+            f"BME680 {hex(self.addr)} Altitude": self.bme680.altitude,
         }
 
 # Internal BME680, address 0x76 (soldered back)
