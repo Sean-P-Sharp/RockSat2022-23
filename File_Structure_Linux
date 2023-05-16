@@ -1,6 +1,6 @@
 # File_Structure_Linux
 
-"""
+'''
 File Structure (LINUX)
 Contrbutors: Gage Gunn
 
@@ -10,6 +10,7 @@ This file will
 1. Create all necessary folders for data storage
 2. Allow files to be created (named ID [date(m-d-y)]_[time(h-m-s)])
 3. Allow data to be written to said files
+
 
 HOW TO USE
 1. Write fs = FileStructure() at top of file
@@ -22,15 +23,16 @@ To create a file -- fs.write_to_folder("[folder name]", "[subfolder name {write 
     - Example: fs.write_to_folder("BME680", "Temperature", "Temperature file created on {time}")
     - Will create a csv file in designated folder
     
-To write to a already created file -- fs.write_to_file("[folder name]", "[subfolder name {write "" if none}]", "[data]")
+To write to a already created file -- fs.write_to_file("[folder name]", "[subfolder name {write None if none}]", "[data]")
     - Example: fs.write_to_folder("BME680", "Temperature", "123.45")
     - Will write to the most recently created file in a specific folder and subfolder
     
 To use Flight Log - 
-    1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", "", "Folders initialized")
+    1. Create flight log file at top of file - fs.write_to_folder("Flight_Log", None, "Folders initialized")
     2. Add to flight log - fs.write_to_file("Flight_Log", None, "[statement]")
 
-"""
+---------------------------------------------------------------------- '''
+
 
 
 ### Libraries ###
@@ -117,7 +119,7 @@ class FileStructure:
 
         with open(file_path, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([int(time.time()*1000)] + [data])
+            writer.writerow([time.time()*1000] + [data])
 
 
 ### Functions ###
@@ -143,4 +145,4 @@ fs = FileStructure()
 
 
 # Create folder on write instead of 
-# int(time.time()*1000) write time stamp to beginning of each line of data
+# Make naming scheme a little better
