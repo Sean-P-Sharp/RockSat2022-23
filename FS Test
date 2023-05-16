@@ -1,5 +1,8 @@
+# FS Test
+
 """
 File Structure Test
+Contributors: Gage Gunn
 This file is for testing the ability to access the 'File_Structure' file for use for the 
 22-23 RockSat-X Program along with giving examples on how it is used.
 """
