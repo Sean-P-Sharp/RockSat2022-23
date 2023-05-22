@@ -74,7 +74,7 @@
         GSE     T-30s             Payload powers on and all relevant threads are started. Begins camera recording and data collection.
         TE-2    T+20s             Extend the 360-camera arm.
         TE-3    T+30s             Retract the 360-camera arm.
-                TE-3+30s          Cycle GoPro recording to force file saving. Safe shutdown of payload control computer and other
+                TE-3 + 300s       Cycle GoPro recording to force file saving. Safe shutdown of payload control computer and other
                                   electronic hardware.
 """
 
@@ -218,6 +218,7 @@ def main(commandLineArguments):
             # If extend limit switch not hit, extend (positive throttle),
             # Otherwise, return True to signify extension
             if not armExtended():
+                movementStartTime = time.time() # Record when we started moving as a failsafe
                 arm.throttle = 1
                 time.sleep(1)
                 while arm.throttle == 1:
@@ -228,6 +229,12 @@ def main(commandLineArguments):
                         if telemetry: telemetry.transmit("Extension limit switch hit")
                         logger.info("Extension limit switch hit")
                         return True
+                    # If the time for movement is exceeded, notify in logs and telemetry and then stop moving
+                    elif time.time() - movementStartTime > 16:
+                        arm.throttle = 0
+                        if telemetry: telemetry.transmit("FAILSAFE: extension time limit exceeded, motor stopped")
+                        logger.info("FAILSAFE: extension time limit exceeded, motor stopped")
+                        return True
             else: return True
         except: return False
     def retractArm():
@@ -235,6 +242,7 @@ def main(commandLineArguments):
             # If extend limit switch not hit, retract (negative throttle),
             # Otherwise, return True to signify retraction
             if not armRetracted():
+                movementStartTime = time.time() # Record when we started moving as a failsafe
                 arm.throttle = -1
                 time.sleep(1)
                 while arm.throttle == -1:
@@ -243,6 +251,12 @@ def main(commandLineArguments):
                         arm.throttle = 0
                         if telemetry: telemetry.transmit("Retraction limit switch hit")
                         logger.info("Retraction limit switch hit")
+                        return True
+                    # If the time for movement is exceeded, notify in logs and telemetry and then stop moving
+                    elif time.time() - movementStartTime > 16:
+                        arm.throttle = 0
+                        if telemetry: telemetry.transmit("FAILSAFE: retraction time limit exceeded, motor stopped")
+                        logger.info("FAILSAFE: retraction time limit exceeded, motor stopped")
                         return True
             else: return True
         except: return False

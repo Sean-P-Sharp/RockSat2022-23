@@ -98,7 +98,11 @@ def main(bootTime, telemetry):
             i = 0
             for column in sensorOrder:
                 # Get the data for this column
-                csvLine += str(data[column])
+                try:
+                    csvLine += str(data[column])
+                except:
+                    # If that column was not returned by the sensors, insert a placeholder
+                    csvLine += "NONE"
                 # Add a comma unless this is the last value
                 if i != len(sensorOrder) - 1: csvLine += ","
                 i += 1
