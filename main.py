@@ -271,6 +271,7 @@ def main(commandLineArguments):
     inhibited = inhibit()
     if inhibited:
         logger.warning("Testing inhibitor pin is active, arm motor will not move")
+        logger.warning("Testing inhibitor pin is active, camera will not be given signals")
         logger.warning("Testing inhibitor pin is active, persisting state cleared")
         persist.clear()
         currentState = persist.read()
