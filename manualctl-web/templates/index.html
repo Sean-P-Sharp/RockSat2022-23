@@ -12,6 +12,7 @@
     <div class="container py-3">
         <h3>CC of CO RockSat-X 2022-2023</h3>
         <h1>Payload Control Web Interface</h1>
+        <hr>
         <div class="row">
             <div class="col-6">
                 <img src="/static/motorhat.png" class="img-fluid">
@@ -22,6 +23,87 @@
                     
                 </table>
             </div>
+        </div>
+        <hr>
+        <h6>Manual Control</h6>
+        <div class="row">
+            <div class="col-8">
+                <h4>Robotic Arm</h4>
+                <label for="throttleRange" class="form-label">Motor Throttle</label>
+                <input type="range" class="form-range" id="throttleRange" min="-1" value="0" max="1" step="0.1">
+                <button id="motor-set" class="btn btn-lg btn-success" type="button">Set</button>
+                <button id="motor-halt" class="btn btn-lg btn-danger" type="button">HALT MOTOR</button>
+                <button id="motor-ext" class="btn btn-lg btn-info" type="button">Auto Extend</button>
+                <button id="motor-ret" class="btn btn-lg btn-warning" type="button">Auto Retract</button>
+                <p><br>Auto Extend and Auto Retract functions make use of the limit switches to stop the motor once the desired position is reached.</p>
+            </div>
+            <div class="col-4">
+                <h4>360º Camera</h4>
+                <p>Use the solid state relay to send the recoding/shutter button signal to the camera.</p>
+                <button id="camera-toggle" class="btn btn-lg btn-primary" type="button">Toggle Camera Recording</button>
+            </div>
+        </div>
+        <hr>
+        <h6>Full Flight Software Test Suite</h6>
+        <h4>Options</h4>
+        <p>Choose command line arguments/options to provide to the payload software prior to running.</p>
+        <div class="row">
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --reset
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --debug
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --telemetry
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --sensors
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --thermal
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --motor
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                      --camera
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-lg btn-primary" type="button">Start Payload Software With Given Options</button>
+        <button class="btn btn-lg btn-danger" type="button">Kill Payload Software Process</button>
+        <br>
+        <br>
+        <h4>Logger Output</h4>
+        <div style="font-family: monospace" id="log-output">
+            No output.
         </div>
     </div>
 

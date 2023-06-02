@@ -37,6 +37,8 @@ async function updatePinStatesTable() {
     }
 }
 
+
+
 window.addEventListener("load", (event) => {
     // Build the GPIO state table
     const inputGPIOPinTable = document.getElementById("gpio-pin-state-table");
@@ -46,5 +48,40 @@ window.addEventListener("load", (event) => {
     
     window.setInterval(() => {
         updatePinStatesTable();
+        updateLog();
     }, 300);
-});  
+});
+
+/*
+ *  Manual Control Functions 
+ */
+const motorThrottleRangeInput = document.getElementById("throttleRange")
+const motorSetButton = document.getElementById("motor-set")
+const motorHaltButton = document.getElementById("motor-halt")
+const motorExtendButton = document.getElementById("motor-ext")
+const motorRetractButton = document.getElementById("motor-ret")
+const cameraToggleButton = document.getElementById("camera-toggle")
+motorSetButton.addEventListener("click", async () => {
+    const response = await fetch(`/api/motor?throttle=${motorThrottleRangeInput.value}`);
+    const jsonData = await response.json();
+});
+
+motorHaltButton.addEventListener("click", async () => {
+    const response = await fetch(`/api/motor?throttle=${0.0}`);
+    const jsonData = await response.json();
+});
+
+motorExtendButton.addEventListener("click", async () => {
+    const response = await fetch(`/api/arm/extend`);
+    const jsonData = await response.json();
+});
+
+motorRetractButton.addEventListener("click", async () => {
+    const response = await fetch(`/api/arm/retract`);
+    const jsonData = await response.json();
+});
+
+cameraToggleButton.addEventListener("click", async () => {
+    const response = await fetch(`/api/camera/toggle`);
+    const jsonData = await response.json();
+});
