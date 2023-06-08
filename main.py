@@ -208,9 +208,17 @@ def main(commandLineArguments):
         if id == 3: return GPIO.input(TE_3) == 1
 
     # Configure MotorKit
-    motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
-    arm = motorKit.motor1
-    arm.throttle = 0 # Reset motor
+    arm = None
+    if "--motor" in commandLineArguments or runAll:
+        try:
+            motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
+            arm = motorKit.motor1
+            arm.throttle = 0 # Reset motor
+            logger.info("Initialized motor hat over I2C and reset arm motor throttle")
+            if telemetry: telemetry.transmit("Initialized motor hat over I2C")
+        except Exception as e:
+            logger.critical(f"Failed to initialize MotorKit for MotorHat over i2c: {str(e)}")
+            if telemetry: telemetry.transmit("Failed to initialize motor hat")
 
     # Arm Extension & Retraction Methods
     def extendArm():
@@ -387,3 +395,5 @@ def main(commandLineArguments):
 # If this file is run on its own (which it will be, run the main method) 
 if __name__ == "__main__":
     main(sys.argv)
+else:
+    print("__name__ not __main__")
