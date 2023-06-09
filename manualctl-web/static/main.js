@@ -18,8 +18,8 @@ const inputPins = [
 ]
 
 const inputPinLabels = {
-    "27": "Extend Limit",
-    "23": "Retract Limit",
+    "27": "Retract Limit",
+    "23": "Extend Limit",
     "25": "TE-3",
     "5": "TE-2",
     "21": "Inhibit Signal",

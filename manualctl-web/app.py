@@ -47,9 +47,9 @@ for pin in inputPinNumbers: GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Initialize camera (GPIO output)
 def toggleRecord():
-    GPIO.output(CAMERA, GPIO.HIGH)
+    GPIO.output(17, GPIO.HIGH)
     time.sleep(1.25)
-    GPIO.output(CAMERA, GPIO.LOW)
+    GPIO.output(17, GPIO.LOW)
 
 # MotorKit
 from adafruit_motorkit import MotorKit
@@ -57,6 +57,7 @@ from adafruit_motorkit import MotorKit
 motorKit = MotorKit(i2c=busio.I2C(board.SCL, board.SDA))
 arm = motorKit.motor1
 arm.throttle = 0 # Reset motor
+GPIO.setup(17, GPIO.OUT)
 # Arm auto extension and retraction
 def extendArm():
     arm.throttle = 1
@@ -109,6 +110,7 @@ def set_throttle():
         except:
             pass
         arm.throttle = float(throttle)
+        print(float(throttle))
     response = {
         "throttle": str(arm.throttle)
     }
@@ -125,7 +127,7 @@ def extend_arm():
     motorThread.start()
     return json.dumps({"result": "true"})
 @app.route("/api/arm/retract")
-def extend_arm():
+def retract_arm():
     try:
         motorThread.kill()
         motorThread.join()
@@ -137,8 +139,8 @@ def extend_arm():
     return json.dumps({"result": "true"})
 
 # Software control API endpoints
-@app.route("/api/software/start/<options:options>")
-def start_software():
+@app.route("/api/software/start/<path:path>")
+def start_software(path):
     if softwareThread == None or softwareThread.poll() == None:
         os.listdir("")
         softwareThread = subprocess.Popen(['/usr/bin/python /root/RockSat22-23/main.py'], pwd="/root/RockSat22-23/")

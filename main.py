@@ -178,6 +178,7 @@ def main(commandLineArguments):
     if "--telemetry" in commandLineArguments or runAll:
         telemetry = Telemetry()
         telemetry.transmit("Hello Wallops")
+        telemetry.transmit(f"Note: file number is {str(bootTime)}")
     #   Sensors
     sensorThread = None # Initialized to a None value so that it can be skipped when exiting (if it is not run)
     if '--sensors' in commandLineArguments or runAll:
@@ -281,6 +282,8 @@ def main(commandLineArguments):
         logger.warning("Testing inhibitor pin is active, arm motor will not move")
         logger.warning("Testing inhibitor pin is active, camera will not be given signals")
         logger.warning("Testing inhibitor pin is active, persisting state cleared")
+        logger.warning("Testing inhibitor pin is active, disregarding any potential power failure")
+        powerFailed = False
         persist.clear()
         currentState = persist.read()
 
@@ -289,6 +292,9 @@ def main(commandLineArguments):
         toggleRecord()
         logger.info("Toggled main camera recording on")
         if telemetry: telemetry.transmit("Camera Toggle Record On")
+        # Set current state
+        currentState = "CAM"
+        if not inhibited: persist.set(currentState)
 
     # Keep looping and take action based on the timer events.
     operating = True
@@ -297,7 +303,7 @@ def main(commandLineArguments):
     TE3time = 0
     while operating:
         # If TE-2 pin fires
-        if TE(2) and (not currentState or currentState == "TE-2"):
+        if TE(2) and (currentState == "CAM" or currentState == "TE-2"):
             if telemetry: telemetry.transmit("TE-2 Triggered")
             logger.info("Battery bus timer event TE-2 triggered")
             # Set current state
@@ -370,26 +376,35 @@ def main(commandLineArguments):
     # Clear persistence flag regardless of inhibitor state (if we have reached splashdown, just take it from the top)
     #   The reason for this is that the camera has stopped recording and it is already to start clean
     persist.clear()
+    logger.info("Cleared persisting state (payload is now reset)")
+    if telemetry: telemetry.transmit("Cleared persisting state (payload is now reset)")
 
     # Reset the motor one last time in case it breaks out of the main loop
     arm.throttle = 0
 
     # If inhibitor was changed during operation, that means that we do not want to shutdown (eg. want a shell)
     if inhibited and not inhibit():
-        logger.warning("Inhibitor pin, which was originally connected, was disconnected during operation signalling the desire to keep the Pi on after this test run")
+        msg = "Inhibitor pin, which was originally connected, was disconnected during operation signalling the desire to keep the Pi on after this test run"
+        logger.warning(msg)
+        if telemetry: telemetry.transmit(msg)
         return True
     elif not inhibited and inhibit():
-        logger.warning("Inhibitor pin, which was originally disconnected, was connected during operation signalling the desire to keep the Pi on after this test run")
+        msg = "Inhibitor pin, which was originally disconnected, was connected during operation signalling the desire to keep the Pi on after this test run"
+        logger.warning(msg)
+        if telemetry: telemetry.transmit(msg)
         return True
     
     # Shutdown the pi
     if "--debug" not in commandLineArguments:
         logger.info("Shutting down electronics in preparation for splashdown!")
+        if telemetry: telemetry.transmit("Payload electronics will shut down in preparation for splashdown")
         time.sleep(1)
         os.system("shutdown -h now")
         return
     else:
-        logger.info("--debug flag detected, electronics will not be shut down. Exiting script...")
+        msg = "--debug flag detected, electronics will not be shut down. Exiting script..."
+        logger.info(msg)
+        if telemetry: telemetry.transmit(msg)
         return
 
 # If this file is run on its own (which it will be, run the main method) 

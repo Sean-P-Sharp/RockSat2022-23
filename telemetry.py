@@ -17,7 +17,7 @@ class Telemetry:
         try:
             self.ser = serial.Serial(
                 port="/dev/ttyS0",
-                baudrate=9600,
+                baudrate=19200,
                 timeout=1
             )
             self.logger.info("Opened RS232 interface for telemetry")
