@@ -283,9 +283,11 @@ def main(commandLineArguments):
         logger.warning("Testing inhibitor pin is active, camera will not be given signals")
         logger.warning("Testing inhibitor pin is active, persisting state cleared")
         logger.warning("Testing inhibitor pin is active, disregarding any potential power failure")
+        if telemetry: telemetry.transmit("Inhibitor pin active: arm and camera functions disabled")
         powerFailed = False
         persist.clear()
         currentState = persist.read()
+        if telemetry: telemetry.transmit("Inhibitor pin active: persisting state cleared")
 
     # If camera is in scope of operation, toggle recording on
     if ("--camera" in commandLineArguments or runAll) and not powerFailed and not inhibited:
@@ -303,7 +305,7 @@ def main(commandLineArguments):
     TE3time = 0
     while operating:
         # If TE-2 pin fires
-        if TE(2) and (currentState == "CAM" or currentState == "TE-2"):
+        if TE(2) and (currentState == "CAM" or (not currentState) or currentState == "TE-2"):
             if telemetry: telemetry.transmit("TE-2 Triggered")
             logger.info("Battery bus timer event TE-2 triggered")
             # Set current state
