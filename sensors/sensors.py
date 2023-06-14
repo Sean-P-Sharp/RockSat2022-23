@@ -60,9 +60,12 @@ def main(bootTime, telemetry):
             sensorInstance = Sensor(i2c)
             if sensorInstance: sensors.append(sensorInstance)
             logger.info(f"Initialized {Sensor.__name__} over I2C")
+            if telemetry: telemetry.transmit(f"Initialized {Sensor.__name__} over I2C")
         except Exception as e:
             # Log failure
             logger.critical(f"Failed to initialize {Sensor.__name__} over I2C. Exception: {e}")
+            if telemetry: telemetry.transmit(f"Failed to initialize {Sensor.__name__} over I2C")
+
     logger.info("Finished initializing sensors")
 
     # Create the data file
