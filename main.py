@@ -12,9 +12,7 @@
         will trigger arm movement, camera actions, and safely shut things down before splashdown.
 
     Contributors:
-        Vu Dang
         Sean Sharp
-        Angela Gabay
         Gage Gunn
         Konstantin Zaremski <kzaremski@student.cccs.edu> <konstantin.zaremski@gmail.com>
 
